@@ -1,31 +1,60 @@
 package com.example.eventmanagement.service;
 
+import com.example.eventmanagement.dto.RegisterRequest;
+import com.example.eventmanagement.model.Roles;
 import com.example.eventmanagement.model.User;
 import com.example.eventmanagement.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-    private final UserRepository userRepository;
+    private final UserRepository  userRepo;
+    private final PasswordEncoder encoder;
 
-    public AuthService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AuthService(UserRepository userRepo, PasswordEncoder encoder) {
+        this.userRepo = userRepo;
+        this.encoder  = encoder;
+    }
+
+    public User signup(RegisterRequest req) {
+        if (userRepo.existsByEmail(req.getEmail())) {
+            throw new RuntimeException("Email already registered");
+        }
+        if (req.getPrn() != null && !req.getPrn().isBlank()
+                && userRepo.existsByPrn(req.getPrn())) {
+            throw new RuntimeException("PRN already registered");
+        }
+
+        // Parse role — default to STUDENT if blank/invalid
+        Roles role;
+        try {
+            role = Roles.valueOf(req.getRole().toUpperCase().trim());
+        } catch (Exception e) {
+            role = Roles.STUDENT;
+        }
+
+        User user = new User();
+        user.setName(req.getName());
+        user.setEmail(req.getEmail());
+        user.setPassword(encoder.encode(req.getPassword()));
+        user.setRole(role);
+        user.setDepartment(req.getDepartment());
+        user.setPrn(req.getPrn());
+        user.setYear(req.getYear());
+        user.setDivision(req.getDivision());
+
+        return userRepo.save(user);
     }
 
     public User login(String email, String password) {
-    email = email.trim().toLowerCase();
-    password = password.trim();
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new RuntimeException("Invalid username or password"));
-
-    System.out.println("DB PASSWORD=[" + user.getPassword() + "]");
-
-    if (!user.getPassword().equals(password)) {
-        throw new RuntimeException("Invalid username or password");
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+        return user;
     }
-
-    return user;
-}
 }

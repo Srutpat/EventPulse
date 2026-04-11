@@ -1,161 +1,64 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, Zap } from "lucide-react";
+
+const ROLE_HOME = {
+  STUDENT:"/student", ORGANIZER:"/organizer",
+  FACULTY_ADVISOR:"/faculty", SDW_COORDINATOR:"/sdw", HOD:"/hod",
+};
 
 export default function Login({ onLogin }) {
-
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [loading,setLoading] = useState(false);
-  const [error,setError] = useState("");
-
+  const [email,   setEmail]   = useState("");
+  const [password,setPassword]= useState("");
+  const [loading, setLoading] = useState(false);
+  const [error,   setError]   = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-
     e.preventDefault();
-
-    if(loading) return;
-
-    setLoading(true);
-    setError("");
-
-    try{
-
-      const res = await api.post("/auth/login",{
-        email,
-        password
-      });
-
+    if (loading) return;
+    setLoading(true); setError("");
+    try {
+      const res = await api.post("/auth/login",{email,password});
       onLogin(res.data);
-
-      navigate(`/${res.data.role.toLowerCase()}`);
-
-    }catch(err){
-      setError("Invalid email or password");
-    }
-    finally{
-      setLoading(false);
-    }
-
+      navigate(ROLE_HOME[res.data.role?.toUpperCase().trim()] || "/login");
+    } catch { setError("Invalid email or password."); }
+    finally  { setLoading(false); }
   };
 
   return (
-
-    <div className="min-h-screen flex items-center justify-center
-    bg-gradient-to-br from-blue-200 via-sky-100 to-blue-300">
-
-      <form
-        onSubmit={handleLogin}
-        className="w-[380px] backdrop-blur-xl
-        bg-white/70 border border-white/40
-        rounded-2xl shadow-xl p-8
-        flex flex-col gap-6
-        transition duration-300 hover:shadow-2xl">
-
-        <div className="text-center">
-
-          <h1 className="text-2xl font-semibold text-slate-800">
-            Sign in with email
-          </h1>
-
-          <p className="text-sm text-slate-500 mt-1">
-            Make a new doc to bring your words,
-            data, and teams together.
-          </p>
-
-        </div>
-
-        {error && (
-          <div className="text-red-500 text-sm text-center">
-            {error}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-teal-50 to-sky-100 px-4">
+      <div className="w-full max-w-sm">
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <div className="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center shadow">
+            <Zap size={18} className="text-white"/>
           </div>
-        )}
-
-        {/* Email */}
-        <div className="relative">
-
-          <Mail
-            size={18}
-            className="absolute left-3 top-3 text-slate-400"
-          />
-
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e)=>setEmail(e.target.value)}
-            className="w-full pl-10 pr-4 py-2
-            border border-slate-200
-            rounded-lg
-            focus:outline-none
-            focus:ring-2 focus:ring-blue-400
-            bg-white"
-          />
-
+          <span className="text-xl font-bold text-slate-800" style={{fontFamily:"'Syne',sans-serif"}}>CampusEvents</span>
         </div>
-
-        {/* Password */}
-        <div className="relative">
-
-          <Lock
-            size={18}
-            className="absolute left-3 top-3 text-slate-400"
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e)=>setPassword(e.target.value)}
-            className="w-full pl-10 pr-4 py-2
-            border border-slate-200
-            rounded-lg
-            focus:outline-none
-            focus:ring-2 focus:ring-blue-400
-            bg-white"
-          />
-
+        <form onSubmit={handleLogin} className="glass-card p-8 flex flex-col gap-5">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800">Welcome back</h1>
+            <p className="text-sm text-slate-500 mt-1">Sign in to continue</p>
+          </div>
+          {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">{error}</div>}
+          <div className="relative">
+            <Mail size={16} className="absolute left-3.5 top-3 text-slate-400"/>
+            <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required className="input pl-10"/>
+          </div>
+          <div className="relative">
+            <Lock size={16} className="absolute left-3.5 top-3 text-slate-400"/>
+            <input type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} required className="input pl-10"/>
+          </div>
+          <button type="submit" disabled={loading} className="btn w-full py-2.5">{loading?"Signing in…":"Sign In"}</button>
+          <p className="text-center text-sm text-slate-500">No account?{" "}<Link to="/signup" className="text-emerald-600 font-medium hover:underline">Register</Link></p>
+        </form>
+        <div className="mt-4 glass-card p-4 text-xs text-slate-500 space-y-0.5">
+          <p className="font-semibold text-slate-600 mb-1">Test credentials (password: 1234)</p>
+          <p>👤 student@test.com &nbsp;&nbsp; 🎯 organizer@test.com</p>
+          <p>🏫 faculty@test.com &nbsp;&nbsp; 📋 sdw@test.com &nbsp;&nbsp; 👑 hod@test.com</p>
         </div>
-
-        <div className="flex justify-between text-sm text-slate-500">
-
-          <label className="flex gap-2 items-center">
-            <input type="checkbox"/>
-            Remember me
-          </label>
-
-          <span className="cursor-pointer hover:text-blue-600">
-            Forgot password?
-          </span>
-
-        </div>
-
-        <button
-          className="bg-black text-white py-2 rounded-lg
-          hover:opacity-90 transition"
-          disabled={loading}>
-
-          {loading ? "Signing in..." : "Get Started"}
-
-        </button>
-
-        {/* social */}
-        <div className="text-center text-xs text-slate-400">
-          Or sign in with
-        </div>
-
-        <div className="flex justify-center gap-6">
-
-          <span className="cursor-pointer">G</span>
-          <span className="cursor-pointer">F</span>
-          <span className="cursor-pointer"></span>
-
-        </div>
-
-      </form>
-
+      </div>
     </div>
   );
 }

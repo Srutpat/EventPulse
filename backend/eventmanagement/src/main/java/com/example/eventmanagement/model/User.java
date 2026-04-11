@@ -10,34 +10,53 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Roles role;
 
     private String department;
 
-    // getters & setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Column(unique = true)
+    private String prn;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    private String year;       // "FE" | "SE" | "TE" | "BE" — stored as String
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    private String division;
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    // ── Getters & Setters ─────────────────────────────────────────────────────
+    public Long   getId()                  { return id; }
+    public void   setId(Long id)           { this.id = id; }
 
-    public Roles getRole() { return role; }
-    public void setRole(Roles role) { this.role = role; }
+    public String getName()                { return name; }
+    public void   setName(String v)        { this.name = v; }
 
-    public String getDepartment() { return department; }
-    public void setDepartment(String department) { this.department = department; }
+    public String getEmail()               { return email; }
+    public void   setEmail(String v)       { this.email = v; }
+
+    public String getPassword()            { return password; }
+    public void   setPassword(String v)    { this.password = v; }
+
+    public Roles  getRole()                { return role; }
+    public void   setRole(Roles v)         { this.role = v; }
+
+    public String getDepartment()          { return department; }
+    public void   setDepartment(String v)  { this.department = v; }
+
+    public String getPrn()                 { return prn; }
+    public void   setPrn(String v)         { this.prn = v; }
+
+    public String getYear()                { return year; }
+    public void   setYear(String v)        { this.year = v; }
+
+    public String getDivision()            { return division; }
+    public void   setDivision(String v)    { this.division = v; }
 }

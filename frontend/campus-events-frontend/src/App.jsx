@@ -1,113 +1,94 @@
+import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 
-import Login from "./pages/Login";
-import StudentDashboard from "./pages/StudentDashboard";
-import OrganizerDashboard from "./pages/OrganizerDashboard";
-import FacultyDashboard from "./pages/FacultyDashboard";
+// Auth
+import Login  from "./pages/Login";
+import Signup from "./pages/Signup";
+
+// Student
+import StudentDashboard     from "./pages/student/StudentDashboard";
+import StudentEvents        from "./pages/student/StudentEvents";
+import StudentRegistrations from "./pages/student/StudentRegistrations";
+
+// Organizer
+import OrganizerDashboard    from "./pages/organizer/OrganizerDashboard";
+import CreateEvent           from "./pages/organizer/CreateEvent";
+import OrganizerParticipants from "./pages/OrganizerParticipants";
+import SubmitBudget          from "./pages/organizer/SubmitBudget";
+import PostEventReport       from "./pages/organizer/PostEventReport";
+
+// Faculty Advisor
+import FacultyDashboard  from "./pages/faculty/FacultyDashboard";
+import FacultyApprovals  from "./pages/faculty/FacultyApprovals";
+import FacultyReports    from "./pages/faculty/FacultyReports";
+
+// SDW Coordinator
+import SDWDashboard  from "./pages/sdw/SDWDashboard";
+import SDWApprovals  from "./pages/sdw/SDWApprovals";
+
+// HoD
+import HoDDashboard  from "./pages/hod/HoDDashboard";
+import HoDApprovals  from "./pages/hod/HoDApprovals";
+
+// ── Protected Route ──────────────────────────────────────────────────────────
+function Guard({ user, roles, children }) {
+  if (!user) return <Navigate to="/login" replace />;
+  const userRole = user.role?.toUpperCase().trim();
+  if (!roles.includes(userRole)) return <Navigate to="/login" replace />;
+  return children;
+}
 
 export default function App() {
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("user")); }
+    catch { return null; }
+  });
 
-  const [user, setUser] = useState(null);
+  const login  = (u) => { localStorage.setItem("user", JSON.stringify(u)); setUser(u); };
+  const logout = ()  => { localStorage.removeItem("user"); setUser(null); };
 
-  // Restore user after refresh
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-  }, []);
-
-  const handleLogin = (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-  };
-
-  // Protected Route
-  const ProtectedRoute = ({ role, children }) => {
-
-    if (!user) {
-      return <Navigate to="/login" replace />;
-    }
-
-    if (user.role !== role) {
-      return <Navigate to="/login" replace />;
-    }
-
-    return children;
-  };
+  const S  = ["STUDENT"];
+  const O  = ["ORGANIZER"];
+  const FA = ["FACULTY_ADVISOR"];
+  const SW = ["SDW_COORDINATOR"];
+  const H  = ["HOD"];
 
   return (
     <BrowserRouter>
-
       <Routes>
+        {/* Public */}
+        <Route path="/login"  element={<Login  onLogin={login} />} />
+        <Route path="/signup" element={<Signup />} />
 
-        {/* Default route */}
-        <Route
-          path="/"
-          element={
-            user
-              ? <Navigate to={`/${user.role.toLowerCase()}`} />
-              : <Navigate to="/login" />
-          }
-        />
+        {/* ── Student ── */}
+        <Route path="/student"               element={<Guard user={user} roles={S}><StudentDashboard     onLogout={logout}/></Guard>}/>
+        <Route path="/student/events"        element={<Guard user={user} roles={S}><StudentEvents        onLogout={logout}/></Guard>}/>
+        <Route path="/student/registrations" element={<Guard user={user} roles={S}><StudentRegistrations onLogout={logout}/></Guard>}/>
 
-        {/* Login */}
-        <Route
-          path="/login"
-          element={
-            user
-              ? <Navigate to={`/${user.role.toLowerCase()}`} />
-              : <Login onLogin={handleLogin} />
-          }
-        />
+        {/* ── Organizer ── */}
+        <Route path="/organizer"               element={<Guard user={user} roles={O}><OrganizerDashboard    onLogout={logout}/></Guard>}/>
+        <Route path="/organizer/create"        element={<Guard user={user} roles={O}><CreateEvent           onLogout={logout}/></Guard>}/>
+        <Route path="/organizer/edit/:id"      element={<Guard user={user} roles={O}><CreateEvent           onLogout={logout}/></Guard>}/>
+        <Route path="/organizer/participants"  element={<Guard user={user} roles={O}><OrganizerParticipants onLogout={logout}/></Guard>}/>
+        <Route path="/organizer/budget/:id"    element={<Guard user={user} roles={O}><SubmitBudget          onLogout={logout}/></Guard>}/>
+        <Route path="/organizer/report/:id"    element={<Guard user={user} roles={O}><PostEventReport       onLogout={logout}/></Guard>}/>
 
-        {/* Student */}
-        <Route
-          path="/student"
-          element={
-            <ProtectedRoute role="STUDENT">
-              <StudentDashboard
-                user={user}
-                onLogout={handleLogout}
-              />
-            </ProtectedRoute>
-          }
-        />
+        {/* ── Faculty Advisor ── */}
+        <Route path="/faculty"          element={<Guard user={user} roles={FA}><FacultyDashboard onLogout={logout}/></Guard>}/>
+        <Route path="/faculty/approvals"element={<Guard user={user} roles={FA}><FacultyApprovals onLogout={logout}/></Guard>}/>
+        <Route path="/faculty/reports"  element={<Guard user={user} roles={FA}><FacultyReports   onLogout={logout}/></Guard>}/>
 
-        {/* Organizer */}
-        <Route
-          path="/organizer"
-          element={
-            <ProtectedRoute role="ORGANIZER">
-              <OrganizerDashboard
-                user={user}
-                onLogout={handleLogout}
-              />
-            </ProtectedRoute>
-          }
-        />
+        {/* ── SDW Coordinator ── */}
+        <Route path="/sdw"          element={<Guard user={user} roles={SW}><SDWDashboard onLogout={logout}/></Guard>}/>
+        <Route path="/sdw/approvals"element={<Guard user={user} roles={SW}><SDWApprovals onLogout={logout}/></Guard>}/>
 
-        {/* Faculty */}
-        <Route
-          path="/faculty"
-          element={
-            <ProtectedRoute role="FACULTY">
-              <FacultyDashboard
-                user={user}
-                onLogout={handleLogout}
-              />
-            </ProtectedRoute>
-          }
-        />
+        {/* ── HoD ── */}
+        <Route path="/hod"          element={<Guard user={user} roles={H}><HoDDashboard onLogout={logout}/></Guard>}/>
+        <Route path="/hod/approvals"element={<Guard user={user} roles={H}><HoDApprovals onLogout={logout}/></Guard>}/>
 
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/login" replace />}/>
       </Routes>
-
     </BrowserRouter>
   );
 }

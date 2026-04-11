@@ -3,5 +3,7 @@ package com.example.eventmanagement.model;
 public enum Roles {
     STUDENT,
     ORGANIZER,
-    FACULTY
+    FACULTY_ADVISOR,
+    SDW_COORDINATOR,
+    HOD
 }

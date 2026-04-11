@@ -1,0 +1,45 @@
+export const DEPARTMENTS = [
+  "Computer Science","Information Technology",
+  "Electronics & Telecommunication","Mechanical Engineering",
+  "Civil Engineering","Electrical Engineering",
+  "Artificial Intelligence & ML","Data Science","Cybersecurity","Other",
+];
+export const FACULTY_DEPARTMENTS = [
+  "Computer Science","Information Technology","Electronics & Telecommunication",
+  "Mechanical Engineering","Civil Engineering","AIML Engineering",
+  "Applied Science & Humanity",
+];
+export const DIVISIONS = ["A","B","C","D","E"];
+export const YEARS = [
+  {value:"FE",label:"FE — First Year"},{value:"SE",label:"SE — Second Year"},
+  {value:"TE",label:"TE — Third Year"},{value:"BE",label:"BE — Final Year"},
+];
+export const CLUBS = [
+  "CESA (ACM) ","CESA(ACMW)","OWASP","LFDT","ITSA",
+  "MLSC","IEEE Student Branch (IT)","GDGC","Entrepreneurship Cell",
+  "ETSA","IEEE (EnTC)","MESA","CiESA","AiMSA","GFG","FYSA","NSS","Sports","Higher Studies","SDW (Overall)", "Coding Club","T&P"
+];
+export const CATEGORIES = [
+  "Technical","Cultural","Sports","Workshop","Seminar",
+  "Hackathon","Guest Lecture","Competition","Fest","Other",
+];
+export const STATUS_META = {
+  DRAFT:            {label:"Draft",            color:"badge-gray"  },
+  PENDING_FACULTY:  {label:"Pending Faculty",  color:"badge-yellow"},
+  FACULTY_APPROVED: {label:"Faculty Approved", color:"badge-blue"  },
+  FACULTY_REJECTED: {label:"Faculty Rejected", color:"badge-red"   },
+  PENDING_SDW:      {label:"Pending SDW",      color:"badge-yellow"},
+  SDW_APPROVED:     {label:"SDW Approved",     color:"badge-blue"  },
+  SDW_REJECTED:     {label:"SDW Rejected",     color:"badge-red"   },
+  PENDING_HOD:      {label:"Pending HoD",      color:"badge-yellow"},
+  HOD_REJECTED:     {label:"HoD Rejected",     color:"badge-red"   },
+  APPROVED:         {label:"Approved ✓",        color:"badge-green" },
+};
+export const WORKFLOW_STEPS = [
+  {key:"PENDING_FACULTY", label:"Faculty Review"},
+  {key:"FACULTY_APPROVED",label:"Faculty ✓"},
+  {key:"PENDING_SDW",     label:"SDW Review"},
+  {key:"SDW_APPROVED",    label:"SDW ✓"},
+  {key:"PENDING_HOD",     label:"HoD Review"},
+  {key:"APPROVED",        label:"Live ✓"},
+];

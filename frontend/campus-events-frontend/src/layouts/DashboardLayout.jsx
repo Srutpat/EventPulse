@@ -1,32 +1,15 @@
 import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
-import ActivityPanel from "../components/ActivityPanel";
 
 export default function DashboardLayout({ children, onLogout }) {
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
+      <Sidebar role={user?.role} onLogout={onLogout} />
 
-      <Sidebar />
-
-      <div className="flex flex-col flex-1">
-
-        <Navbar onLogout={onLogout} />
-
-        <div className="flex flex-1 gap-6 p-6">
-
-          <div className="flex-1 space-y-6">
-            {children}
-          </div>
-
-          <div className="w-[320px]">
-            <ActivityPanel />
-          </div>
-
-        </div>
-
-      </div>
-
+      <main className="flex-1 overflow-y-auto p-8">
+        {children}
+      </main>
     </div>
   );
 }

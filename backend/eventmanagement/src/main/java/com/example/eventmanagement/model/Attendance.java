@@ -1,8 +1,9 @@
 package com.example.eventmanagement.model;
 
-// package com.campus.eventmanagement.model;
-
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "attendance")
@@ -12,27 +13,35 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
-    private User student;
+    @OneToOne
+@JoinColumn(name = "registration_id", nullable = false, unique = true)
+@JsonIgnoreProperties({"attendance", "student", "event"})  // ← ADD THIS
+private Registration registration;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
-
+    @Column(nullable = false)
     private boolean present;
 
-    public Long getId(){ return id;}
-    public void setId(Long id){this.id = id;}
+    @Column(nullable = false)
+    private LocalDateTime markedAt = LocalDateTime.now();
 
-    public User getStudent(){return student;}
-    public void setStudent(User student){this.student = student;}
+    @ManyToOne(fetch = FetchType.EAGER)
+@JoinColumn(name = "marked_by", nullable = false)
+@JsonIgnoreProperties({"password"})                        // ← ADD THIS
+private User markedBy;
 
-    public Event getEvent(){return event;}
-    public void setEvent(Event event){this.event = event;}
+    // ── Getters & Setters ─────────────────────────────────────────────────────
+    public Long         getId()                           { return id; }
+    public void         setId(Long id)                    { this.id = id; }
 
-    public boolean getPresent(){return present;}
-    public void setPresent(boolean present){this.present = present;}
+    public Registration getRegistration()                 { return registration; }
+    public void         setRegistration(Registration v)   { this.registration = v; }
 
-    // getters & setters
+    public boolean      isPresent()                       { return present; }
+    public void         setPresent(boolean v)             { this.present = v; }
+
+    public LocalDateTime getMarkedAt()                    { return markedAt; }
+    public void          setMarkedAt(LocalDateTime v)     { this.markedAt = v; }
+
+    public User         getMarkedBy()                     { return markedBy; }
+    public void         setMarkedBy(User v)               { this.markedBy = v; }
 }

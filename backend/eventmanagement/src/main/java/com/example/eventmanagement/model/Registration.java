@@ -1,40 +1,53 @@
 package com.example.eventmanagement.model;
-// package com.campus.eventmanagement.model;
 
 import jakarta.persistence.*;
-
+import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Entity
-@Table(
-    name = "registrations",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "event_id"})
-)
+@Table(name = "registrations")
 public class Registration {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private User user;
+   @ManyToOne(fetch = FetchType.EAGER)
+@JoinColumn(name = "event_id", nullable = false)
+@JsonIgnoreProperties({"organizer", "registrations"})   // ← ADD THIS
+private Event event;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
-    private Event event;
+// Change the student field:
+@ManyToOne(fetch = FetchType.EAGER)
+@JoinColumn(name = "student_id", nullable = false)
+@JsonIgnoreProperties({"password", "registrations"})    // ← ADD THIS
+private User student;
 
-    @Enumerated(EnumType.STRING)
-    private ParticipationStatus status = ParticipationStatus.REGISTERED;
+    // Mapped by registration field in Attendance entity
+    @OneToOne(mappedBy = "registration", fetch = FetchType.EAGER)
+    private Attendance attendance;
 
-    // getters & setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Column(nullable = false)
+    private String status = "REGISTERED";   // plain String — matches DB USER-DEFINED type
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    @Column(nullable = false)
+    private LocalDateTime registeredAt = LocalDateTime.now();
 
-    public Event getEvent() { return event; }
-    public void setEvent(Event event) { this.event = event; }
+    // ── Getters & Setters ─────────────────────────────────────────────────────
+    public Long         getId()                           { return id; }
+    public void         setId(Long id)                    { this.id = id; }
 
-    public ParticipationStatus getStatus() { return status; }
-    public void setStatus(ParticipationStatus status) { this.status = status; }
+    public User         getStudent()                      { return student; }
+    public void         setStudent(User v)                { this.student = v; }
+
+    public Event        getEvent()                        { return event; }
+    public void         setEvent(Event v)                 { this.event = v; }
+
+    public Attendance   getAttendance()                   { return attendance; }
+    public void         setAttendance(Attendance v)       { this.attendance = v; }
+
+    public String       getStatus()                       { return status; }
+    public void         setStatus(String v)               { this.status = v; }
+
+    public LocalDateTime getRegisteredAt()                { return registeredAt; }
+    public void          setRegisteredAt(LocalDateTime v) { this.registeredAt = v; }
 }
