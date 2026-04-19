@@ -32,7 +32,8 @@ public class User {
     // ── Student fields ─────────────────────────────────────────────────────────
     @Column(unique = true)
     private String prn;
-    private String year;       // FE/SE/TE/BE
+    @Column(name = "user_year")
+private String year;      // FE/SE/TE/BE
     private String division;
 
     // ── Organizer fields ───────────────────────────────────────────────────────
