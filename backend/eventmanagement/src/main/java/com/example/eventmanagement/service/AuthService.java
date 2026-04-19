@@ -19,31 +19,30 @@ public class AuthService {
     }
 
     public User signup(RegisterRequest req) {
-        if (userRepo.existsByEmail(req.getEmail())) {
+        if (userRepo.existsByEmail(req.getEmail()))
             throw new RuntimeException("Email already registered");
-        }
-        if (req.getPrn() != null && !req.getPrn().isBlank()
-                && userRepo.existsByPrn(req.getPrn())) {
+        if (req.getPrn() != null && !req.getPrn().isBlank() && userRepo.existsByPrn(req.getPrn()))
             throw new RuntimeException("PRN already registered");
-        }
 
-        // Parse role — default to STUDENT if blank/invalid
         Roles role;
-        try {
-            role = Roles.valueOf(req.getRole().toUpperCase().trim());
-        } catch (Exception e) {
-            role = Roles.STUDENT;
-        }
+        try { role = Roles.valueOf(req.getRole().toUpperCase().trim()); }
+        catch (Exception e) { role = Roles.STUDENT; }
 
         User user = new User();
         user.setName(req.getName());
         user.setEmail(req.getEmail());
         user.setPassword(encoder.encode(req.getPassword()));
         user.setRole(role);
+        user.setMobileNumber(req.getMobileNumber());
         user.setDepartment(req.getDepartment());
         user.setPrn(req.getPrn());
         user.setYear(req.getYear());
         user.setDivision(req.getDivision());
+        user.setClubName(req.getClubName());
+        user.setClubDepartment(req.getClubDepartment());
+        user.setSubject(req.getSubject());
+        user.setSpecialization(req.getSpecialization());
+        user.setClubNames(req.getClubNames());
 
         return userRepo.save(user);
     }
@@ -51,10 +50,8 @@ public class AuthService {
     public User login(String email, String password) {
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        if (!encoder.matches(password, user.getPassword())) {
+        if (!encoder.matches(password, user.getPassword()))
             throw new RuntimeException("Invalid password");
-        }
         return user;
     }
 }

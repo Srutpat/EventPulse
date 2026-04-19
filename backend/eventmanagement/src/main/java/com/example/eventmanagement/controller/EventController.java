@@ -10,110 +10,93 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/events")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class EventController {
 
-    private final EventService eventService;
-    public EventController(EventService eventService) { this.eventService = eventService; }
+    private final EventService svc;
+    public EventController(EventService svc) { this.svc = svc; }
 
-    // ── Basic CRUD ────────────────────────────────────────────────────────────
-
-    @GetMapping
-    public ResponseEntity<List<Event>> getAll() {
-        return ResponseEntity.ok(eventService.getAllEvents());
-    }
-
-    @GetMapping("/approved")
-    public ResponseEntity<List<Event>> getApproved() {
-        return ResponseEntity.ok(eventService.getApprovedEvents());
-    }
-
-    @GetMapping("/pending/faculty")
-    public ResponseEntity<List<Event>> getPendingFaculty() {
-        return ResponseEntity.ok(eventService.getPendingFaculty());
-    }
-
-    @GetMapping("/pending/sdw")
-    public ResponseEntity<List<Event>> getPendingSdw() {
-        return ResponseEntity.ok(eventService.getPendingSdw());
-    }
-
-    @GetMapping("/pending/hod")
-    public ResponseEntity<List<Event>> getPendingHod() {
-        return ResponseEntity.ok(eventService.getPendingHod());
-    }
-
-    @GetMapping("/organizer/{organizerId}")
-    public ResponseEntity<List<Event>> getByOrganizer(@PathVariable Long organizerId) {
-        return ResponseEntity.ok(eventService.getByOrganizer(organizerId));
-    }
+    @GetMapping                     public ResponseEntity<List<Event>> getAll()      { return ResponseEntity.ok(svc.getAllEvents()); }
+    @GetMapping("/approved")        public ResponseEntity<List<Event>> getApproved() { return ResponseEntity.ok(svc.getApprovedEvents()); }
+    @GetMapping("/pending/faculty") public ResponseEntity<List<Event>> pendFaculty() { return ResponseEntity.ok(svc.getPendingFaculty()); }
+    @GetMapping("/pending/sdw")     public ResponseEntity<List<Event>> pendSdw()     { return ResponseEntity.ok(svc.getPendingSdw()); }
+    @GetMapping("/pending/hod")     public ResponseEntity<List<Event>> pendHod()     { return ResponseEntity.ok(svc.getPendingHod()); }
+    @GetMapping("/organizer/{id}")  public ResponseEntity<List<Event>> byOrg(@PathVariable Long id) { return ResponseEntity.ok(svc.getByOrganizer(id)); }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        try { return ResponseEntity.ok(eventService.getById(id)); }
-        catch (RuntimeException e) { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); }
+        try { return ResponseEntity.ok(svc.getById(id)); }
+        catch (RuntimeException e) { return ResponseEntity.status(404).body(e.getMessage()); }
     }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody EventRequest req) {
-        try { return ResponseEntity.status(HttpStatus.CREATED).body(eventService.createEvent(req)); }
+        try { return ResponseEntity.status(HttpStatus.CREATED).body(svc.createEvent(req)); }
         catch (RuntimeException e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody EventRequest req) {
-        try { return ResponseEntity.ok(eventService.updateEvent(id, req)); }
-        catch (RuntimeException e) { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); }
+        try { return ResponseEntity.ok(svc.updateEvent(id, req)); }
+        catch (RuntimeException e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        try { eventService.deleteEvent(id); return ResponseEntity.ok("Deleted"); }
-        catch (RuntimeException e) { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); }
+        try { svc.deleteEvent(id); return ResponseEntity.ok("Deleted"); }
+        catch (RuntimeException e) { return ResponseEntity.status(404).body(e.getMessage()); }
     }
-
-    // ── Budget submission (organizer, post-faculty-approval) ──────────────────
 
     @PostMapping("/{id}/budget")
     public ResponseEntity<?> submitBudget(@PathVariable Long id, @RequestBody EventRequest req) {
-        try { return ResponseEntity.ok(eventService.submitBudget(id, req)); }
+        try { return ResponseEntity.ok(svc.submitBudget(id, req)); }
         catch (RuntimeException e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
 
-    // ── Approval workflow ─────────────────────────────────────────────────────
-
     @PostMapping("/{id}/faculty-review")
     public ResponseEntity<?> facultyReview(@PathVariable Long id, @RequestBody ApprovalRequest req) {
-        try { return ResponseEntity.ok(eventService.facultyReview(id, req)); }
+        try { return ResponseEntity.ok(svc.facultyReview(id, req)); }
         catch (RuntimeException e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
 
     @PostMapping("/{id}/sdw-review")
     public ResponseEntity<?> sdwReview(@PathVariable Long id, @RequestBody ApprovalRequest req) {
-        try { return ResponseEntity.ok(eventService.sdwReview(id, req)); }
+        try { return ResponseEntity.ok(svc.sdwReview(id, req)); }
         catch (RuntimeException e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
 
     @PostMapping("/{id}/forward-hod")
     public ResponseEntity<?> forwardToHod(@PathVariable Long id) {
-        try { return ResponseEntity.ok(eventService.forwardToHod(id)); }
+        try { return ResponseEntity.ok(svc.forwardToHod(id)); }
+        catch (RuntimeException e) { return ResponseEntity.badRequest().body(e.getMessage()); }
+    }
+
+    /** Central events (NSS etc) — faculty sends directly to SDW Dean, skipping dept SDW */
+    @PostMapping("/{id}/forward-dean")
+    public ResponseEntity<?> forwardToDean(@PathVariable Long id) {
+        try { return ResponseEntity.ok(svc.forwardToDean(id)); }
         catch (RuntimeException e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
 
     @PostMapping("/{id}/hod-review")
     public ResponseEntity<?> hodReview(@PathVariable Long id, @RequestBody ApprovalRequest req) {
-        try { return ResponseEntity.ok(eventService.hodReview(id, req)); }
+        try { return ResponseEntity.ok(svc.hodReview(id, req)); }
         catch (RuntimeException e) { return ResponseEntity.badRequest().body(e.getMessage()); }
     }
 
-    // ── Post-event report ─────────────────────────────────────────────────────
-
     @PostMapping("/{id}/post-event")
-    public ResponseEntity<?> postEventReport(@PathVariable Long id, @RequestBody PostEventRequest req) {
-        try { return ResponseEntity.ok(eventService.submitPostEventReport(id, req)); }
+    public ResponseEntity<?> postEvent(@PathVariable Long id, @RequestBody PostEventRequest req) {
+        try { return ResponseEntity.ok(svc.submitPostEventReport(id, req)); }
         catch (RuntimeException e) { return ResponseEntity.badRequest().body(e.getMessage()); }
+    }
+
+    /** USP: Analytics endpoint — all roles can access */
+    @GetMapping("/analytics")
+    public ResponseEntity<Map<String, Object>> analytics() {
+        return ResponseEntity.ok(svc.getAnalytics());
     }
 }

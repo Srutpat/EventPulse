@@ -1,10 +1,18 @@
 import { Calendar, MapPin, Building2, Tag, IndianRupee, Clock } from "lucide-react";
+import { getStatus } from "../utils";
 
 const STATUS_BADGE = {
+  PENDING_APPROVAL: "badge badge-yellow",  // legacy
+  PENDING_FACULTY:  "badge badge-yellow",
+  FACULTY_APPROVED: "badge badge-blue",
+  FACULTY_REJECTED: "badge badge-red",
+  PENDING_SDW:      "badge badge-yellow",
+  SDW_APPROVED:     "badge badge-blue",
+  SDW_REJECTED:     "badge badge-red",
+  PENDING_HOD:      "badge badge-yellow",
+  HOD_REJECTED:     "badge badge-red",
   APPROVED:         "badge badge-green",
-  PENDING_APPROVAL: "badge badge-yellow",
   DRAFT:            "badge badge-gray",
-  REJECTED:         "badge badge-red",
 };
 
 export function formatDate(dt) {
@@ -40,8 +48,8 @@ export default function EventCard({ event, children }) {
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-semibold text-slate-800 leading-snug">{event.title}</h3>
         {event.status && (
-          <span className={STATUS_BADGE[event.status] || "badge badge-gray"}>
-            {event.status.replace("_", " ")}
+          <span className={STATUS_BADGE[getStatus(event)] || "badge badge-gray"}>
+            {getStatus(event).replace(/_/g, " ")}
           </span>
         )}
       </div>

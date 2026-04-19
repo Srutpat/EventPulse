@@ -6,8 +6,8 @@ export const DEPARTMENTS = [
 ];
 export const FACULTY_DEPARTMENTS = [
   "Computer Science","Information Technology","Electronics & Telecommunication",
-  "Mechanical Engineering","Civil Engineering","AIML Engineering",
-  "Applied Science & Humanity",
+  "Mechanical Engineering","Civil Engineering","Electrical Engineering",
+  "Mathematics","Physics","Administration","Other",
 ];
 export const DIVISIONS = ["A","B","C","D","E"];
 export const YEARS = [
@@ -15,15 +15,16 @@ export const YEARS = [
   {value:"TE",label:"TE — Third Year"},{value:"BE",label:"BE — Final Year"},
 ];
 export const CLUBS = [
-  "CESA (ACM) ","CESA(ACMW)","OWASP","LFDT","ITSA",
-  "MLSC","IEEE Student Branch (IT)","GDGC","Entrepreneurship Cell",
-  "ETSA","IEEE (EnTC)","MESA","CiESA","AiMSA","GFG","FYSA","NSS","Sports","Higher Studies","SDW (Overall)", "Coding Club","T&P"
+  "GDGC","Coding Club","ITSA","Art Circle","ACM",
+  "MLSC","IEEE Student Branch","OWASP","Entrepreneurship Cell",
+  "MESA","CiESA","AiMSA","CRESA","Central","ETSA",
 ];
 export const CATEGORIES = [
   "Technical","Cultural","Sports","Workshop","Seminar",
   "Hackathon","Guest Lecture","Competition","Fest","Other",
 ];
 export const STATUS_META = {
+  PENDING_APPROVAL: {label:"Pending Review",   color:"badge-yellow"},  // legacy
   DRAFT:            {label:"Draft",            color:"badge-gray"  },
   PENDING_FACULTY:  {label:"Pending Faculty",  color:"badge-yellow"},
   FACULTY_APPROVED: {label:"Faculty Approved", color:"badge-blue"  },
@@ -43,3 +44,7 @@ export const WORKFLOW_STEPS = [
   {key:"PENDING_HOD",     label:"HoD Review"},
   {key:"APPROVED",        label:"Live ✓"},
 ];
+
+// ── App branding ──────────────────────────────────────────────────────────────
+export const APP_NAME    = "EventPulse";
+export const APP_TAGLINE = "Where campus events come alive";

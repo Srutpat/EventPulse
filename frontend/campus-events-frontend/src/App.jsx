@@ -1,40 +1,35 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Auth
-import Login  from "./pages/Login";
-import Signup from "./pages/Signup";
+import HomePage from "./pages/HomePage";
+import Login    from "./pages/Login";
+import Signup   from "./pages/Signup";
 
-// Student
 import StudentDashboard     from "./pages/student/StudentDashboard";
 import StudentEvents        from "./pages/student/StudentEvents";
 import StudentRegistrations from "./pages/student/StudentRegistrations";
 
-// Organizer
 import OrganizerDashboard    from "./pages/organizer/OrganizerDashboard";
 import CreateEvent           from "./pages/organizer/CreateEvent";
-import OrganizerParticipants from "./pages/OrganizerParticipants";
+import OrganizerParticipants from "./pages/organizer/OrganizerParticipants";
 import SubmitBudget          from "./pages/organizer/SubmitBudget";
 import PostEventReport       from "./pages/organizer/PostEventReport";
 
-// Faculty Advisor
 import FacultyDashboard  from "./pages/faculty/FacultyDashboard";
 import FacultyApprovals  from "./pages/faculty/FacultyApprovals";
 import FacultyReports    from "./pages/faculty/FacultyReports";
 
-// SDW Coordinator
 import SDWDashboard  from "./pages/sdw/SDWDashboard";
 import SDWApprovals  from "./pages/sdw/SDWApprovals";
 
-// HoD
 import HoDDashboard  from "./pages/hod/HoDDashboard";
 import HoDApprovals  from "./pages/hod/HoDApprovals";
 
-// ── Protected Route ──────────────────────────────────────────────────────────
+import Analytics from "./pages/analytics/Analytics";
+
 function Guard({ user, roles, children }) {
   if (!user) return <Navigate to="/login" replace />;
-  const userRole = user.role?.toUpperCase().trim();
-  if (!roles.includes(userRole)) return <Navigate to="/login" replace />;
+  if (!roles.includes(user.role?.toUpperCase().trim())) return <Navigate to="/login" replace />;
   return children;
 }
 
@@ -47,47 +42,55 @@ export default function App() {
   const login  = (u) => { localStorage.setItem("user", JSON.stringify(u)); setUser(u); };
   const logout = ()  => { localStorage.removeItem("user"); setUser(null); };
 
-  const S  = ["STUDENT"];
-  const O  = ["ORGANIZER"];
-  const FA = ["FACULTY_ADVISOR"];
-  const SW = ["SDW_COORDINATOR"];
-  const H  = ["HOD"];
+  const S   = ["STUDENT"];
+  const O   = ["ORGANIZER"];
+  const FA  = ["FACULTY_ADVISOR"];
+  const SW  = ["SDW_COORDINATOR"];
+  const H   = ["HOD"];
+
+  const wrap = (roles, el) => <Guard user={user} roles={roles}>{el}</Guard>;
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public */}
+        {/* PUBLIC — home page shows live events without login */}
+        <Route path="/"       element={<HomePage />} />
         <Route path="/login"  element={<Login  onLogin={login} />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* ── Student ── */}
-        <Route path="/student"               element={<Guard user={user} roles={S}><StudentDashboard     onLogout={logout}/></Guard>}/>
-        <Route path="/student/events"        element={<Guard user={user} roles={S}><StudentEvents        onLogout={logout}/></Guard>}/>
-        <Route path="/student/registrations" element={<Guard user={user} roles={S}><StudentRegistrations onLogout={logout}/></Guard>}/>
+        {/* Student */}
+        <Route path="/student"               element={wrap(S,  <StudentDashboard     onLogout={logout}/>)}/>
+        <Route path="/student/events"        element={wrap(S,  <StudentEvents        onLogout={logout}/>)}/>
+        <Route path="/student/registrations" element={wrap(S,  <StudentRegistrations onLogout={logout}/>)}/>
 
-        {/* ── Organizer ── */}
-        <Route path="/organizer"               element={<Guard user={user} roles={O}><OrganizerDashboard    onLogout={logout}/></Guard>}/>
-        <Route path="/organizer/create"        element={<Guard user={user} roles={O}><CreateEvent           onLogout={logout}/></Guard>}/>
-        <Route path="/organizer/edit/:id"      element={<Guard user={user} roles={O}><CreateEvent           onLogout={logout}/></Guard>}/>
-        <Route path="/organizer/participants"  element={<Guard user={user} roles={O}><OrganizerParticipants onLogout={logout}/></Guard>}/>
-        <Route path="/organizer/budget/:id"    element={<Guard user={user} roles={O}><SubmitBudget          onLogout={logout}/></Guard>}/>
-        <Route path="/organizer/report/:id"    element={<Guard user={user} roles={O}><PostEventReport       onLogout={logout}/></Guard>}/>
+        {/* Organizer */}
+        <Route path="/organizer"              element={wrap(O,  <OrganizerDashboard    onLogout={logout}/>)}/>
+        <Route path="/organizer/create"       element={wrap(O,  <CreateEvent           onLogout={logout}/>)}/>
+        <Route path="/organizer/edit/:id"     element={wrap(O,  <CreateEvent           onLogout={logout}/>)}/>
+        <Route path="/organizer/participants" element={wrap(O,  <OrganizerParticipants onLogout={logout}/>)}/>
+        <Route path="/organizer/budget/:id"   element={wrap(O,  <SubmitBudget          onLogout={logout}/>)}/>
+        <Route path="/organizer/report/:id"   element={wrap(O,  <PostEventReport       onLogout={logout}/>)}/>
 
-        {/* ── Faculty Advisor ── */}
-        <Route path="/faculty"          element={<Guard user={user} roles={FA}><FacultyDashboard onLogout={logout}/></Guard>}/>
-        <Route path="/faculty/approvals"element={<Guard user={user} roles={FA}><FacultyApprovals onLogout={logout}/></Guard>}/>
-        <Route path="/faculty/reports"  element={<Guard user={user} roles={FA}><FacultyReports   onLogout={logout}/></Guard>}/>
+        {/* Faculty Advisor */}
+        <Route path="/faculty"           element={wrap(FA, <FacultyDashboard onLogout={logout}/>)}/>
+        <Route path="/faculty/approvals" element={wrap(FA, <FacultyApprovals onLogout={logout}/>)}/>
+        <Route path="/faculty/reports"   element={wrap(FA, <FacultyReports   onLogout={logout}/>)}/>
 
-        {/* ── SDW Coordinator ── */}
-        <Route path="/sdw"          element={<Guard user={user} roles={SW}><SDWDashboard onLogout={logout}/></Guard>}/>
-        <Route path="/sdw/approvals"element={<Guard user={user} roles={SW}><SDWApprovals onLogout={logout}/></Guard>}/>
+        {/* SDW */}
+        <Route path="/sdw"           element={wrap(SW, <SDWDashboard onLogout={logout}/>)}/>
+        <Route path="/sdw/approvals" element={wrap(SW, <SDWApprovals onLogout={logout}/>)}/>
 
-        {/* ── HoD ── */}
-        <Route path="/hod"          element={<Guard user={user} roles={H}><HoDDashboard onLogout={logout}/></Guard>}/>
-        <Route path="/hod/approvals"element={<Guard user={user} roles={H}><HoDApprovals onLogout={logout}/></Guard>}/>
+        {/* HoD */}
+        <Route path="/hod"           element={wrap(H,  <HoDDashboard onLogout={logout}/>)}/>
+        <Route path="/hod/approvals" element={wrap(H,  <HoDApprovals onLogout={logout}/>)}/>
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/login" replace />}/>
+        {/* Analytics — staff only */}
+        <Route path="/analytics" element={wrap(
+          ["ORGANIZER","FACULTY_ADVISOR","SDW_COORDINATOR","HOD"],
+          <Analytics onLogout={logout}/>
+        )}/>
+
+        <Route path="*" element={<Navigate to="/" replace/>}/>
       </Routes>
     </BrowserRouter>
   );

@@ -2,110 +2,109 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Calendar, ClipboardList, Users,
   CheckCircle, BarChart3, LogOut, PlusCircle, Zap,
-  IndianRupee, FileText, ShieldCheck, Eye
+  IndianRupee, FileText, ShieldCheck, TrendingUp
 } from "lucide-react";
 
 const MENUS = {
   STUDENT: [
-    { name:"Dashboard",        path:"/student",               icon:LayoutDashboard },
-    { name:"Browse Events",    path:"/student/events",        icon:Calendar        },
-    { name:"My Registrations", path:"/student/registrations", icon:ClipboardList   },
+    { name:"Dashboard",         path:"/student",               icon:LayoutDashboard },
+    { name:"Browse Events",     path:"/student/events",        icon:Calendar        },
+    { name:"My Registrations",  path:"/student/registrations", icon:ClipboardList   },
   ],
   ORGANIZER: [
-    { name:"Dashboard",        path:"/organizer",              icon:LayoutDashboard },
-    { name:"Create Event",     path:"/organizer/create",       icon:PlusCircle      },
-    { name:"Participants",     path:"/organizer/participants",  icon:Users           },
+    { name:"Dashboard",         path:"/organizer",              icon:LayoutDashboard },
+    { name:"Create Event",      path:"/organizer/create",       icon:PlusCircle      },
+    { name:"Participants",       path:"/organizer/participants", icon:Users           },
+    { name:"Analytics",         path:"/analytics",              icon:TrendingUp      },
   ],
   FACULTY_ADVISOR: [
-    { name:"Dashboard",        path:"/faculty",                icon:LayoutDashboard },
-    { name:"Event Approvals",  path:"/faculty/approvals",      icon:CheckCircle     },
-    { name:"Attendance Reports",path:"/faculty/reports",       icon:BarChart3       },
+    { name:"Dashboard",          path:"/faculty",                icon:LayoutDashboard },
+    { name:"Event Approvals",    path:"/faculty/approvals",      icon:CheckCircle     },
+    { name:"Attendance Reports", path:"/faculty/reports",        icon:BarChart3       },
+    { name:"Analytics",          path:"/analytics",              icon:TrendingUp      },
   ],
   SDW_COORDINATOR: [
-    { name:"Dashboard",        path:"/sdw",                    icon:LayoutDashboard },
-    { name:"Event & Budget",   path:"/sdw/approvals",          icon:IndianRupee     },
+    { name:"Dashboard",     path:"/sdw",             icon:LayoutDashboard },
+    { name:"Review & Budget",path:"/sdw/approvals",  icon:IndianRupee     },
+    { name:"Analytics",     path:"/analytics",       icon:TrendingUp      },
   ],
   HOD: [
-    { name:"Dashboard",        path:"/hod",                    icon:LayoutDashboard },
-    { name:"Final Approvals",  path:"/hod/approvals",          icon:ShieldCheck     },
+    { name:"Dashboard",      path:"/hod",             icon:LayoutDashboard },
+    { name:"Final Approvals",path:"/hod/approvals",   icon:ShieldCheck     },
+    { name:"Analytics",      path:"/analytics",       icon:TrendingUp      },
   ],
 };
 
-const THEME = {
-  STUDENT:         { grad:"from-sky-50 to-blue-100",     border:"border-blue-200/40",   accent:"bg-blue-600",    chip:"badge-blue"   },
-  ORGANIZER:       { grad:"from-emerald-50 to-teal-100", border:"border-emerald-200/40",accent:"bg-emerald-600", chip:"badge-green"  },
-  FACULTY_ADVISOR: { grad:"from-violet-50 to-purple-100",border:"border-violet-200/40", accent:"bg-violet-600",  chip:"badge-violet" },
-  SDW_COORDINATOR: { grad:"from-amber-50 to-orange-100", border:"border-amber-200/40",  accent:"bg-amber-600",   chip:"badge-yellow" },
-  HOD:             { grad:"from-rose-50 to-pink-100",    border:"border-rose-200/40",   accent:"bg-rose-600",    chip:"badge-red"    },
-};
-
-const ROLE_LABELS = {
-  STUDENT:"Student", ORGANIZER:"Organizer",
-  FACULTY_ADVISOR:"Faculty Advisor",
-  SDW_COORDINATOR:"SDW Coordinator",
-  HOD:"Head of Dept.",
+const ROLE_CONFIG = {
+  STUDENT:         { label:"Student",          grad:"from-indigo-600 to-violet-600"   },
+  ORGANIZER:       { label:"Organizer",        grad:"from-emerald-600 to-teal-500"    },
+  FACULTY_ADVISOR: { label:"Faculty Advisor",  grad:"from-violet-600 to-purple-700"   },
+  SDW_COORDINATOR: { label:"SDW Coordinator",  grad:"from-amber-500 to-orange-500"    },
+  HOD:             { label:"Head of Dept.",    grad:"from-rose-600 to-pink-600"       },
 };
 
 export default function Sidebar({ role, onLogout }) {
   const navigate  = useNavigate();
   const location  = useLocation();
   const menu      = MENUS[role]  || [];
-  const theme     = THEME[role]  || THEME.STUDENT;
-  const roleLabel = ROLE_LABELS[role] || role;
+  const cfg       = ROLE_CONFIG[role] || ROLE_CONFIG.STUDENT;
+  const user      = JSON.parse(localStorage.getItem("user") || "{}");
 
   return (
-    <div className={`w-[240px] shrink-0 h-screen flex flex-col justify-between
-      bg-gradient-to-b ${theme.grad} backdrop-blur-md
-      border-r ${theme.border} border-white/50 p-5 shadow-lg`}>
+    <div className="w-[260px] shrink-0 h-screen flex flex-col bg-white border-r border-slate-100 shadow-sm overflow-hidden">
 
-      {/* Brand */}
-      <div>
-        <div className="flex items-center gap-2 mb-6">
-          <div className={`w-8 h-8 rounded-xl ${theme.accent} flex items-center justify-center shadow`}>
+      {/* Branded header */}
+      <div className={`p-5 bg-gradient-to-br ${cfg.grad} shrink-0`}>
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center">
             <Zap size={16} className="text-white"/>
           </div>
-          <span className="font-bold text-slate-800 text-[15px] tracking-tight"
-                style={{fontFamily:"'Syne', sans-serif"}}>
-            CampusEvents
+          <span className="text-white text-lg font-bold tracking-tight"
+            style={{fontFamily:"'Outfit',sans-serif"}}>EventPulse</span>
+        </div>
+        <div className="bg-white/15 rounded-xl p-3 backdrop-blur-sm">
+          <p className="text-white font-semibold text-sm truncate">{user.name || "User"}</p>
+          <p className="text-white/70 text-xs truncate">{user.email || ""}</p>
+          <span className="mt-1.5 inline-block text-[10px] font-bold px-2 py-0.5
+            rounded-md bg-white/20 text-white uppercase tracking-wide">
+            {cfg.label}
           </span>
         </div>
+      </div>
 
-        {/* Role chip */}
-        <div className="mb-5 px-1">
-          <span className={`badge text-[10px] uppercase tracking-widest ${theme.chip}`}>
-            {roleLabel}
-          </span>
-        </div>
-
-        {/* Nav */}
-        <nav className="space-y-1">
-          {menu.map((item) => {
+      {/* Nav */}
+      <nav className="flex-1 p-3 overflow-y-auto">
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-2 mt-1">
+          Menu
+        </p>
+        <div className="space-y-0.5">
+          {menu.map((item, i) => {
             const Icon     = item.icon;
-            const isActive = location.pathname === item.path;
+            const isActive = location.pathname === item.path ||
+              (item.path !== "/" && location.pathname.startsWith(item.path) && item.path.length > 1);
             return (
               <button key={item.path} onClick={() => navigate(item.path)}
+                style={{ animationDelay:`${i * 50}ms` }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
-                  text-sm font-medium transition-all duration-150
+                  text-sm font-medium transition-all duration-200
                   ${isActive
-                    ? "bg-white shadow-sm text-slate-900"
-                    : "text-slate-600 hover:bg-white/60 hover:text-slate-900"}`}>
-                <Icon size={17} className={isActive ? "opacity-100" : "opacity-60"}/>
-                {item.name}
+                    ? `bg-gradient-to-r ${cfg.grad} text-white shadow-md`
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}>
+                <Icon size={17} className={isActive ? "text-white" : "text-slate-400"}/>
+                <span>{item.name}</span>
+                {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white/60"/>}
               </button>
             );
           })}
-        </nav>
-      </div>
-
-      {/* User + Logout */}
-      <div className="space-y-1">
-        <div className="px-3 py-2 rounded-xl bg-white/40 text-xs text-slate-500 truncate">
-          {JSON.parse(localStorage.getItem("user") || "{}")?.name || ""}
         </div>
+      </nav>
+
+      {/* Logout */}
+      <div className="p-3 border-t border-slate-100 shrink-0">
         <button onClick={onLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
-            text-sm font-medium text-red-500 hover:bg-red-50 transition">
-          <LogOut size={17}/> Logout
+            text-sm font-medium text-red-500 hover:bg-red-50 transition-all">
+          <LogOut size={16}/> Sign Out
         </button>
       </div>
     </div>
