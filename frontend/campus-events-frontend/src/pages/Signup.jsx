@@ -101,7 +101,13 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState("");
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+  const setField = (k) => (e) => {
+  const value = e.target.value;
+  setForm(prev => {
+    if (prev[k] === value) return prev; // prevent unnecessary re-render
+    return { ...prev, [k]: value };
+  });
+};
 
   const totalSteps = 3;
 
@@ -137,23 +143,15 @@ export default function Signup() {
   );
 
   /* ── Step 1: common fields (all roles) ── */
-  const StepCommon = () => (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-xl font-bold text-slate-800 mb-1">Your Details</h2>
-        <p className="text-slate-400 text-sm mb-4">Basic information for your account</p>
-      </div>
-      <Input label="Full Name" required placeholder="e.g. Srutipad Patil"
-        value={form.name || ""} onChange={e => set("name", e.target.value)} />
-      <Input label="Email Address" type="email" required placeholder="you@college.edu"
-        value={form.email || ""} onChange={e => set("email", e.target.value)} />
-      <Input label="Password" type="password" required minLength={6} placeholder="Min 6 characters"
-        value={form.password || ""} onChange={e => set("password", e.target.value)} />
-      <Input label="Mobile Number" type="tel" required placeholder="10-digit number"
-        value={form.mobileNumber || ""} onChange={e => set("mobileNumber", e.target.value)} />
-    </div>
+  function StepCommon({ form, setField }) {
+  return (
+    <Input
+      label="Full Name"
+      value={form.name || ""}
+      onChange={setField("name")}
+    />
   );
-
+}
   /* ── Step 2: role-specific fields ── */
   const StepRoleFields = () => {
     if (role === "STUDENT") return (
@@ -407,7 +405,7 @@ export default function Signup() {
             )}
 
             {step === 0 && <StepRole />}
-            {step === 1 && <StepCommon />}
+           {step === 1 && <StepCommon form={form} setField={setField} />}
             {step === 2 && <StepRoleFields />}
 
             {/* Navigation buttons */}
