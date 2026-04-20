@@ -217,217 +217,217 @@
 //           </div>
 //         </section>
 
-//         {/* ── EVENT TYPE & THEME ── */}
-//         <section className="glass-card p-6 space-y-4">
-//           <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Type & Theme (Optional)</h2>
+      //   {/* ── EVENT TYPE & THEME ── */}
+      //   <section className="glass-card p-6 space-y-4">
+      //     <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Type & Theme (Optional)</h2>
 
-//           <div>
-//             <label className={labelCls}>Theme</label>
-//             <input value={form.theme} onChange={e => set("theme", e.target.value)}
-//               className={fieldCls} placeholder="e.g. Innovation, Sustainability" />
-//           </div>
+      //     <div>
+      //       <label className={labelCls}>Theme</label>
+      //       <input value={form.theme} onChange={e => set("theme", e.target.value)}
+      //         className={fieldCls} placeholder="e.g. Innovation, Sustainability" />
+      //     </div>
 
-//           <div>
-//             <label className={labelCls}>Event Type</label>
-//             <div className="flex gap-2">
-//               {["INDIVIDUAL","TEAM","BOTH"].map(t => (
-//                 <button key={t} type="button"
-//                   onClick={() => set("eventType", form.eventType === t ? "" : t)}
-//                   className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all
-//                     ${form.eventType === t
-//                       ? "bg-indigo-600 text-white border-indigo-600 shadow"
-//                       : "bg-white border-slate-200 text-slate-600 hover:border-indigo-300"}`}>
-//                   {t}
-//                 </button>
-//               ))}
-//             </div>
-//           </div>
+      //     <div>
+      //       <label className={labelCls}>Event Type</label>
+      //       <div className="flex gap-2">
+      //         {["INDIVIDUAL","TEAM","BOTH"].map(t => (
+      //           <button key={t} type="button"
+      //             onClick={() => set("eventType", form.eventType === t ? "" : t)}
+      //             className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all
+      //               ${form.eventType === t
+      //                 ? "bg-indigo-600 text-white border-indigo-600 shadow"
+      //                 : "bg-white border-slate-200 text-slate-600 hover:border-indigo-300"}`}>
+      //             {t}
+      //           </button>
+      //         ))}
+      //       </div>
+      //     </div>
 
-//           <div>
-//             <label className={labelCls}>Speaker / Guest Name</label>
-//             <input value={form.speakerName} onChange={e => set("speakerName", e.target.value)}
-//               className={fieldCls} placeholder="e.g. Dr. Rahul Sharma" />
-//           </div>
-//           {form.speakerName && (
-//             <div>
-//               <label className={labelCls}>Speaker Details</label>
-//               <textarea rows={2} value={form.speakerDetails} onChange={e => set("speakerDetails", e.target.value)}
-//                 className={fieldCls + " resize-none"} placeholder="Designation, organization, topic…" />
-//             </div>
-//           )}
-//         </section>
+      //     <div>
+      //       <label className={labelCls}>Speaker / Guest Name</label>
+      //       <input value={form.speakerName} onChange={e => set("speakerName", e.target.value)}
+      //         className={fieldCls} placeholder="e.g. Dr. Rahul Sharma" />
+      //     </div>
+      //     {form.speakerName && (
+      //       <div>
+      //         <label className={labelCls}>Speaker Details</label>
+      //         <textarea rows={2} value={form.speakerDetails} onChange={e => set("speakerDetails", e.target.value)}
+      //           className={fieldCls + " resize-none"} placeholder="Designation, organization, topic…" />
+      //       </div>
+      //     )}
+      //   </section>
 
-//         {/* ── DATES & VENUE ── */}
-//         <section className="glass-card p-6 space-y-4">
-//           <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Dates & Venue</h2>
+      //   {/* ── DATES & VENUE ── */}
+      //   <section className="glass-card p-6 space-y-4">
+      //     <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Dates & Venue</h2>
 
-//           <div>
-//             <label className={labelCls}>Venue / Location *</label>
-//             <input required value={form.location} onChange={e => set("location", e.target.value)}
-//               className={fieldCls} placeholder="e.g. Main Auditorium, Room 301" />
-//           </div>
+      //     <div>
+      //       <label className={labelCls}>Venue / Location *</label>
+      //       <input required value={form.location} onChange={e => set("location", e.target.value)}
+      //         className={fieldCls} placeholder="e.g. Main Auditorium, Room 301" />
+      //     </div>
 
-//           <div className="grid grid-cols-2 gap-4">
-//             <div>
-//               <label className={labelCls}>Start Date & Time *</label>
-//               <input type="datetime-local" required value={form.startDate}
-//                 onChange={e => set("startDate", e.target.value)} className={fieldCls} />
-//             </div>
-//             <div>
-//               <label className={labelCls}>End Date & Time</label>
-//               <input type="datetime-local" value={form.endDate}
-//                 onChange={e => set("endDate", e.target.value)} className={fieldCls} />
-//             </div>
-//           </div>
+      //     <div className="grid grid-cols-2 gap-4">
+      //       <div>
+      //         <label className={labelCls}>Start Date & Time *</label>
+      //         <input type="datetime-local" required value={form.startDate}
+      //           onChange={e => set("startDate", e.target.value)} className={fieldCls} />
+      //       </div>
+      //       <div>
+      //         <label className={labelCls}>End Date & Time</label>
+      //         <input type="datetime-local" value={form.endDate}
+      //           onChange={e => set("endDate", e.target.value)} className={fieldCls} />
+      //       </div>
+      //     </div>
 
-//           <div className="grid grid-cols-2 gap-4">
-//             <div>
-//               <label className={labelCls}>Registration Deadline</label>
-//               <input type="datetime-local" value={form.registrationDeadline}
-//                 onChange={e => set("registrationDeadline", e.target.value)} className={fieldCls} />
-//             </div>
-//             <div>
-//               <label className={labelCls}>Max Participants</label>
-//               <input type="number" min="1" value={form.maxParticipants}
-//                 onChange={e => set("maxParticipants", e.target.value)}
-//                 className={fieldCls} placeholder="Leave blank for unlimited" />
-//             </div>
-//           </div>
+      //     <div className="grid grid-cols-2 gap-4">
+      //       <div>
+      //         <label className={labelCls}>Registration Deadline</label>
+      //         <input type="datetime-local" value={form.registrationDeadline}
+      //           onChange={e => set("registrationDeadline", e.target.value)} className={fieldCls} />
+      //       </div>
+      //       <div>
+      //         <label className={labelCls}>Max Participants</label>
+      //         <input type="number" min="1" value={form.maxParticipants}
+      //           onChange={e => set("maxParticipants", e.target.value)}
+      //           className={fieldCls} placeholder="Leave blank for unlimited" />
+      //       </div>
+      //     </div>
 
-//           <div>
-//             <label className={labelCls}>Club Website</label>
-//             <input type="url" value={form.clubWebsite} onChange={e => set("clubWebsite", e.target.value)}
-//               className={fieldCls} placeholder="https://…" />
-//           </div>
-//         </section>
+      //     <div>
+      //       <label className={labelCls}>Club Website</label>
+      //       <input type="url" value={form.clubWebsite} onChange={e => set("clubWebsite", e.target.value)}
+      //         className={fieldCls} placeholder="https://…" />
+      //     </div>
+      //   </section>
 
-//         {/* ── COORDINATORS ── */}
-//         <section className="glass-card p-6 space-y-4">
-//           <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">
-//             Event Coordinators * <span className="text-slate-400 font-normal text-xs">(at least one required)</span>
-//           </h2>
+      //   {/* ── COORDINATORS ── */}
+      //   <section className="glass-card p-6 space-y-4">
+      //     <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">
+      //       Event Coordinators * <span className="text-slate-400 font-normal text-xs">(at least one required)</span>
+      //     </h2>
 
-//           {coordinators.map((c, i) => (
-//             <div key={i} className="flex gap-3 items-end">
-//               <div className="flex-1">
-//                 <label className={labelCls}>Coordinator Name *</label>
-//                 <input required={i === 0} value={c.name}
-//                   onChange={e => setCoord(i, "name", e.target.value)}
-//                   className={fieldCls} placeholder="Full name" />
-//               </div>
-//               <div className="flex-1">
-//                 <label className={labelCls}>Contact Number</label>
-//                 <input value={c.contact}
-//                   onChange={e => setCoord(i, "contact", e.target.value)}
-//                   className={fieldCls} placeholder="Mobile number" />
-//               </div>
-//               {coordinators.length > 1 && (
-//                 <button type="button"
-//                   onClick={() => setCoordinators(prev => prev.filter((_, idx) => idx !== i))}
-//                   className="btn-danger px-3 py-2.5 mb-0.5">
-//                   <Minus size={14} />
-//                 </button>
-//               )}
-//             </div>
-//           ))}
+      //     {coordinators.map((c, i) => (
+      //       <div key={i} className="flex gap-3 items-end">
+      //         <div className="flex-1">
+      //           <label className={labelCls}>Coordinator Name *</label>
+      //           <input required={i === 0} value={c.name}
+      //             onChange={e => setCoord(i, "name", e.target.value)}
+      //             className={fieldCls} placeholder="Full name" />
+      //         </div>
+      //         <div className="flex-1">
+      //           <label className={labelCls}>Contact Number</label>
+      //           <input value={c.contact}
+      //             onChange={e => setCoord(i, "contact", e.target.value)}
+      //             className={fieldCls} placeholder="Mobile number" />
+      //         </div>
+      //         {coordinators.length > 1 && (
+      //           <button type="button"
+      //             onClick={() => setCoordinators(prev => prev.filter((_, idx) => idx !== i))}
+      //             className="btn-danger px-3 py-2.5 mb-0.5">
+      //             <Minus size={14} />
+      //           </button>
+      //         )}
+      //       </div>
+      //     ))}
 
-//           <button type="button"
-//             onClick={() => setCoordinators(prev => [...prev, { name:"", contact:"" }])}
-//             className="btn-outline text-xs px-3 py-2 flex items-center gap-1">
-//             <Plus size={13} /> Add Coordinator
-//           </button>
-//         </section>
+      //     <button type="button"
+      //       onClick={() => setCoordinators(prev => [...prev, { name:"", contact:"" }])}
+      //       className="btn-outline text-xs px-3 py-2 flex items-center gap-1">
+      //       <Plus size={13} /> Add Coordinator
+      //     </button>
+      //   </section>
 
-//         {/* ── FEES & PRIZES ── */}
-//         <section className="glass-card p-6 space-y-4">
-//           <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Fees & Prizes (Optional)</h2>
+      //   {/* ── FEES & PRIZES ── */}
+      //   <section className="glass-card p-6 space-y-4">
+      //     <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Fees & Prizes (Optional)</h2>
 
-//           <div className="grid grid-cols-3 gap-4">
-//             <div>
-//               <label className={labelCls}>Entry Fee (₹)</label>
-//               <input type="number" min="0" step="0.01" value={form.entryFee}
-//                 onChange={e => set("entryFee", e.target.value)}
-//                 className={fieldCls} placeholder="0 = free" />
-//             </div>
-//             <div>
-//               <label className={labelCls}>Prize Pool (₹)</label>
-//               <input type="number" min="0" step="0.01" value={form.prizePool}
-//                 onChange={e => set("prizePool", e.target.value)}
-//                 className={fieldCls} placeholder="Optional" />
-//             </div>
-//             <div>
-//               <label className={labelCls}>Goodies / Perks</label>
-//               <input value={form.goodies} onChange={e => set("goodies", e.target.value)}
-//                 className={fieldCls} placeholder="e.g. T-shirt, cert" />
-//             </div>
-//           </div>
-//         </section>
+      //     <div className="grid grid-cols-3 gap-4">
+      //       <div>
+      //         <label className={labelCls}>Entry Fee (₹)</label>
+      //         <input type="number" min="0" step="0.01" value={form.entryFee}
+      //           onChange={e => set("entryFee", e.target.value)}
+      //           className={fieldCls} placeholder="0 = free" />
+      //       </div>
+      //       <div>
+      //         <label className={labelCls}>Prize Pool (₹)</label>
+      //         <input type="number" min="0" step="0.01" value={form.prizePool}
+      //           onChange={e => set("prizePool", e.target.value)}
+      //           className={fieldCls} placeholder="Optional" />
+      //       </div>
+      //       <div>
+      //         <label className={labelCls}>Goodies / Perks</label>
+      //         <input value={form.goodies} onChange={e => set("goodies", e.target.value)}
+      //           className={fieldCls} placeholder="e.g. T-shirt, cert" />
+      //       </div>
+      //     </div>
+      //   </section>
 
-//         {/* ── BUDGET (COMPULSORY) ── */}
-//         <section className="glass-card p-6 space-y-4">
-//           <div className="flex items-center justify-between">
-//             <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">
-//               Budget Details *
-//             </h2>
-//             <span className="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">
-//               Required — enter 0 if no budget
-//             </span>
-//           </div>
+      //   {/* ── BUDGET (COMPULSORY) ── */}
+      //   <section className="glass-card p-6 space-y-4">
+      //     <div className="flex items-center justify-between">
+      //       <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">
+      //         Budget Details *
+      //       </h2>
+      //       <span className="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">
+      //         Required — enter 0 if no budget
+      //       </span>
+      //     </div>
 
-//           <div>
-//             <label className={labelCls}>Total Estimated Budget (₹) *</label>
-//             <input type="number" required min="0" step="0.01" value={form.estimatedBudget}
-//               onChange={e => set("estimatedBudget", e.target.value)}
-//               className={fieldCls} placeholder="0" />
-//           </div>
+      //     <div>
+      //       <label className={labelCls}>Total Estimated Budget (₹) *</label>
+      //       <input type="number" required min="0" step="0.01" value={form.estimatedBudget}
+      //         onChange={e => set("estimatedBudget", e.target.value)}
+      //         className={fieldCls} placeholder="0" />
+      //     </div>
 
-//           <div className="grid grid-cols-2 gap-4">
-//             <div>
-//               <label className={labelCls}>Venue / Hall (₹)</label>
-//               <input type="number" min="0" step="0.01" value={form.venueExpense}
-//                 onChange={e => set("venueExpense", e.target.value)} className={fieldCls} placeholder="0" />
-//             </div>
-//             <div>
-//               <label className={labelCls}>Food & Refreshments (₹)</label>
-//               <input type="number" min="0" step="0.01" value={form.foodExpense}
-//                 onChange={e => set("foodExpense", e.target.value)} className={fieldCls} placeholder="0" />
-//             </div>
-//             <div>
-//               <label className={labelCls}>Decorations (₹)</label>
-//               <input type="number" min="0" step="0.01" value={form.decorExpense}
-//                 onChange={e => set("decorExpense", e.target.value)} className={fieldCls} placeholder="0" />
-//             </div>
-//             <div>
-//               <label className={labelCls}>Printing / Banners (₹)</label>
-//               <input type="number" min="0" step="0.01" value={form.printingExpense}
-//                 onChange={e => set("printingExpense", e.target.value)} className={fieldCls} placeholder="0" />
-//             </div>
-//             <div>
-//               <label className={labelCls}>Other Expenses (₹)</label>
-//               <input type="number" min="0" step="0.01" value={form.otherExpense}
-//                 onChange={e => set("otherExpense", e.target.value)} className={fieldCls} placeholder="0" />
-//             </div>
-//           </div>
+      //     <div className="grid grid-cols-2 gap-4">
+      //       <div>
+      //         <label className={labelCls}>Venue / Hall (₹)</label>
+      //         <input type="number" min="0" step="0.01" value={form.venueExpense}
+      //           onChange={e => set("venueExpense", e.target.value)} className={fieldCls} placeholder="0" />
+      //       </div>
+      //       <div>
+      //         <label className={labelCls}>Food & Refreshments (₹)</label>
+      //         <input type="number" min="0" step="0.01" value={form.foodExpense}
+      //           onChange={e => set("foodExpense", e.target.value)} className={fieldCls} placeholder="0" />
+      //       </div>
+      //       <div>
+      //         <label className={labelCls}>Decorations (₹)</label>
+      //         <input type="number" min="0" step="0.01" value={form.decorExpense}
+      //           onChange={e => set("decorExpense", e.target.value)} className={fieldCls} placeholder="0" />
+      //       </div>
+      //       <div>
+      //         <label className={labelCls}>Printing / Banners (₹)</label>
+      //         <input type="number" min="0" step="0.01" value={form.printingExpense}
+      //           onChange={e => set("printingExpense", e.target.value)} className={fieldCls} placeholder="0" />
+      //       </div>
+      //       <div>
+      //         <label className={labelCls}>Other Expenses (₹)</label>
+      //         <input type="number" min="0" step="0.01" value={form.otherExpense}
+      //           onChange={e => set("otherExpense", e.target.value)} className={fieldCls} placeholder="0" />
+      //       </div>
+      //     </div>
 
-//           <div>
-//             <label className={labelCls}>Budget Notes / Justification</label>
-//             <textarea rows={2} value={form.budgetNotes} onChange={e => set("budgetNotes", e.target.value)}
-//               className={fieldCls + " resize-none"} placeholder="Brief justification for expenses…" />
-//           </div>
-//         </section>
+      //     <div>
+      //       <label className={labelCls}>Budget Notes / Justification</label>
+      //       <textarea rows={2} value={form.budgetNotes} onChange={e => set("budgetNotes", e.target.value)}
+      //         className={fieldCls + " resize-none"} placeholder="Brief justification for expenses…" />
+      //     </div>
+      //   </section>
 
-//         {/* Submit */}
-//         <div className="flex gap-3 pb-8">
-//           <button type="submit" disabled={loading} className="btn flex-1 py-3 text-base">
-//             {loading
-//               ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-//                   {isEdit ? "Updating…" : "Submitting…"}</>
-//               : isEdit ? "Update & Resubmit" : "Submit for Faculty Review"}
-//           </button>
-//           <button type="button" onClick={() => navigate("/organizer")}
-//             className="btn-outline px-6 py-3">Cancel</button>
-//         </div>
-//       </form>
+      //   {/* Submit */}
+      //   <div className="flex gap-3 pb-8">
+      //     <button type="submit" disabled={loading} className="btn flex-1 py-3 text-base">
+      //       {loading
+      //         ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+      //             {isEdit ? "Updating…" : "Submitting…"}</>
+      //         : isEdit ? "Update & Resubmit" : "Submit for Faculty Review"}
+      //     </button>
+      //     <button type="button" onClick={() => navigate("/organizer")}
+      //       className="btn-outline px-6 py-3">Cancel</button>
+      //   </div>
+      // </form>
 //     </DashboardLayout>
 //   );
 // }
@@ -657,11 +657,216 @@ export default function CreateEvent({ onLogout }) {
           )}
         </section>
 
-        {/* SUBMIT */}
-        <button className="btn w-full py-3">
-          {loading ? "Saving..." : isEdit ? "Update Event" : "Create Event"}
-        </button>
+        {/* ── EVENT TYPE & THEME ── */}
+        <section className="glass-card p-6 space-y-4">
+          <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Type & Theme (Optional)</h2>
 
+          <div>
+            <label className={labelCls}>Theme</label>
+            <input value={form.theme} onChange={e => set("theme", e.target.value)}
+              className={fieldCls} placeholder="e.g. Innovation, Sustainability" />
+          </div>
+
+          <div>
+            <label className={labelCls}>Event Type</label>
+            <div className="flex gap-2">
+              {["INDIVIDUAL","TEAM","BOTH"].map(t => (
+                <button key={t} type="button"
+                  onClick={() => set("eventType", form.eventType === t ? "" : t)}
+                  className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-all
+                    ${form.eventType === t
+                      ? "bg-indigo-600 text-white border-indigo-600 shadow"
+                      : "bg-white border-slate-200 text-slate-600 hover:border-indigo-300"}`}>
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className={labelCls}>Speaker / Guest Name</label>
+            <input value={form.speakerName} onChange={e => set("speakerName", e.target.value)}
+              className={fieldCls} placeholder="e.g. Dr. Rahul Sharma" />
+          </div>
+          {form.speakerName && (
+            <div>
+              <label className={labelCls}>Speaker Details</label>
+              <textarea rows={2} value={form.speakerDetails} onChange={e => set("speakerDetails", e.target.value)}
+                className={fieldCls + " resize-none"} placeholder="Designation, organization, topic…" />
+            </div>
+          )}
+        </section>
+
+        {/* ── DATES & VENUE ── */}
+        <section className="glass-card p-6 space-y-4">
+          <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Dates & Venue</h2>
+
+          <div>
+            <label className={labelCls}>Venue / Location *</label>
+            <input required value={form.location} onChange={e => set("location", e.target.value)}
+              className={fieldCls} placeholder="e.g. Main Auditorium, Room 301" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Start Date & Time *</label>
+              <input type="datetime-local" required value={form.startDate}
+                onChange={e => set("startDate", e.target.value)} className={fieldCls} />
+            </div>
+            <div>
+              <label className={labelCls}>End Date & Time</label>
+              <input type="datetime-local" value={form.endDate}
+                onChange={e => set("endDate", e.target.value)} className={fieldCls} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Registration Deadline</label>
+              <input type="datetime-local" value={form.registrationDeadline}
+                onChange={e => set("registrationDeadline", e.target.value)} className={fieldCls} />
+            </div>
+            <div>
+              <label className={labelCls}>Max Participants</label>
+              <input type="number" min="1" value={form.maxParticipants}
+                onChange={e => set("maxParticipants", e.target.value)}
+                className={fieldCls} placeholder="Leave blank for unlimited" />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelCls}>Club Website</label>
+            <input type="url" value={form.clubWebsite} onChange={e => set("clubWebsite", e.target.value)}
+              className={fieldCls} placeholder="https://…" />
+          </div>
+        </section>
+
+        {/* ── COORDINATORS ── */}
+        <section className="glass-card p-6 space-y-4">
+          <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">
+            Event Coordinators * <span className="text-slate-400 font-normal text-xs">(at least one required)</span>
+          </h2>
+
+          {coordinators.map((c, i) => (
+            <div key={i} className="flex gap-3 items-end">
+              <div className="flex-1">
+                <label className={labelCls}>Coordinator Name *</label>
+                <input required={i === 0} value={c.name}
+                  onChange={e => setCoord(i, "name", e.target.value)}
+                  className={fieldCls} placeholder="Full name" />
+              </div>
+              <div className="flex-1">
+                <label className={labelCls}>Contact Number</label>
+                <input value={c.contact}
+                  onChange={e => setCoord(i, "contact", e.target.value)}
+                  className={fieldCls} placeholder="Mobile number" />
+              </div>
+              {coordinators.length > 1 && (
+                <button type="button"
+                  onClick={() => setCoordinators(prev => prev.filter((_, idx) => idx !== i))}
+                  className="btn-danger px-3 py-2.5 mb-0.5">
+                  <Minus size={14} />
+                </button>
+              )}
+            </div>
+          ))}
+
+          <button type="button"
+            onClick={() => setCoordinators(prev => [...prev, { name:"", contact:"" }])}
+            className="btn-outline text-xs px-3 py-2 flex items-center gap-1">
+            <Plus size={13} /> Add Coordinator
+          </button>
+        </section>
+
+        {/* ── FEES & PRIZES ── */}
+        <section className="glass-card p-6 space-y-4">
+          <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">Fees & Prizes (Optional)</h2>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className={labelCls}>Entry Fee (₹)</label>
+              <input type="number" min="0" step="0.01" value={form.entryFee}
+                onChange={e => set("entryFee", e.target.value)}
+                className={fieldCls} placeholder="0 = free" />
+            </div>
+            <div>
+              <label className={labelCls}>Prize Pool (₹)</label>
+              <input type="number" min="0" step="0.01" value={form.prizePool}
+                onChange={e => set("prizePool", e.target.value)}
+                className={fieldCls} placeholder="Optional" />
+            </div>
+            <div>
+              <label className={labelCls}>Goodies / Perks</label>
+              <input value={form.goodies} onChange={e => set("goodies", e.target.value)}
+                className={fieldCls} placeholder="e.g. T-shirt, cert" />
+            </div>
+          </div>
+        </section>
+
+        {/* ── BUDGET (COMPULSORY) ── */}
+        <section className="glass-card p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-bold text-slate-700 text-sm uppercase tracking-wide">
+              Budget Details *
+            </h2>
+            <span className="text-xs text-amber-600 font-medium bg-amber-50 px-2 py-1 rounded-lg border border-amber-200">
+              Required — enter 0 if no budget
+            </span>
+          </div>
+
+          <div>
+            <label className={labelCls}>Total Estimated Budget (₹) *</label>
+            <input type="number" required min="0" step="0.01" value={form.estimatedBudget}
+              onChange={e => set("estimatedBudget", e.target.value)}
+              className={fieldCls} placeholder="0" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Venue / Hall (₹)</label>
+              <input type="number" min="0" step="0.01" value={form.venueExpense}
+                onChange={e => set("venueExpense", e.target.value)} className={fieldCls} placeholder="0" />
+            </div>
+            <div>
+              <label className={labelCls}>Food & Refreshments (₹)</label>
+              <input type="number" min="0" step="0.01" value={form.foodExpense}
+                onChange={e => set("foodExpense", e.target.value)} className={fieldCls} placeholder="0" />
+            </div>
+            <div>
+              <label className={labelCls}>Decorations (₹)</label>
+              <input type="number" min="0" step="0.01" value={form.decorExpense}
+                onChange={e => set("decorExpense", e.target.value)} className={fieldCls} placeholder="0" />
+            </div>
+            <div>
+              <label className={labelCls}>Printing / Banners (₹)</label>
+              <input type="number" min="0" step="0.01" value={form.printingExpense}
+                onChange={e => set("printingExpense", e.target.value)} className={fieldCls} placeholder="0" />
+            </div>
+            <div>
+              <label className={labelCls}>Other Expenses (₹)</label>
+              <input type="number" min="0" step="0.01" value={form.otherExpense}
+                onChange={e => set("otherExpense", e.target.value)} className={fieldCls} placeholder="0" />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelCls}>Budget Notes / Justification</label>
+            <textarea rows={2} value={form.budgetNotes} onChange={e => set("budgetNotes", e.target.value)}
+              className={fieldCls + " resize-none"} placeholder="Brief justification for expenses…" />
+          </div>
+        </section>
+
+        {/* Submit */}
+        <div className="flex gap-3 pb-8">
+          <button type="submit" disabled={loading} className="btn flex-1 py-3 text-base">
+            {loading
+              ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  {isEdit ? "Updating…" : "Submitting…"}</>
+              : isEdit ? "Update & Resubmit" : "Submit for Faculty Review"}
+          </button>
+          <button type="button" onClick={() => navigate("/organizer")}
+            className="btn-outline px-6 py-3">Cancel</button>
+        </div>
       </form>
     </DashboardLayout>
   );
