@@ -4,7 +4,7 @@ import api from "../../api/axios";
 import DashboardLayout   from "../../layouts/DashboardLayout";
 import StatCard          from "../../components/StatCard";
 import PageHeader        from "../../components/PageHeader";
-import WorkflowBadge     from "../../components/WorkflowBadge";
+import WorkflowBadge     from "../../components/WorkFlowBadge";
 import EventDetailDrawer from "../../components/EventDetailDrawer";
 import { STATUS_META }   from "../../constants";
 import {
