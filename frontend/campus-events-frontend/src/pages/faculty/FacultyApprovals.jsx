@@ -4,7 +4,7 @@ import DashboardLayout   from "../../layouts/DashboardLayout";
 import PageHeader        from "../../components/PageHeader";
 import ApprovalModal     from "../../components/ApprovalModal";
 import EventDetailDrawer from "../../components/EventDetailDrawer";
-import WorkflowBadge     from "../../components/WorkflowBadge";
+import WorkflowBadge     from "../../components/WorkFlowBadge";
 import { safeArray, getStatus, formatDateTime, isCentralEvent } from "../../utils";
 import { Eye, CheckCircle, Calendar, MapPin, Phone, Info } from "lucide-react";
 
