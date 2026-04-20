@@ -23,7 +23,7 @@ import SDWDashboard  from "./pages/sdw/SDWDashboard";
 import SDWApprovals  from "./pages/sdw/SDWApprovals";
 
 import HoDDashboard  from "./pages/hod/HodDashboard";
-import HoDApprovals  from "./pages/hod/HoDApprovals";
+import HoDApprovals  from "./pages/hod/HodApprovals";
 
 import Analytics from "./pages/analytics/Analytics";
 
