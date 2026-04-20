@@ -22,7 +22,7 @@ import FacultyReports    from "./pages/faculty/FacultyReports";
 import SDWDashboard  from "./pages/sdw/SDWDashboard";
 import SDWApprovals  from "./pages/sdw/SDWApprovals";
 
-import HoDDashboard  from "./pages/hod/HoDDashboard";
+import HoDDashboard  from "./pages/hod/HodDashboard";
 import HoDApprovals  from "./pages/hod/HoDApprovals";
 
 import Analytics from "./pages/analytics/Analytics";
