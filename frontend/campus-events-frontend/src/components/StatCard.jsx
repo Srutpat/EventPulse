@@ -7,21 +7,26 @@ export default function StatCard({ label, value, icon: Icon, color = "indigo", s
     blue:    "from-blue-500    to-cyan-500    shadow-blue-200",
     violet:  "from-violet-500  to-purple-600  shadow-violet-200",
   };
-  const [gradFrom, gradTo, shadow] = (colors[color] || colors.indigo).split(" ");
+  const parts = (colors[color] || colors.indigo).split(" ");
+  const [gradFrom, gradTo, shadow] = parts;
 
   return (
     <div className="stat-card group">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-slate-500">{label}</p>
+        <p className="text-xs sm:text-sm font-medium text-slate-500 leading-snug">{label}</p>
         {Icon && (
-          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradFrom} ${gradTo}
-            flex items-center justify-center shadow-lg ${shadow}
-            group-hover:scale-110 transition-transform duration-200`}>
-            <Icon size={18} className="text-white"/>
+          <div
+            className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br ${gradFrom} ${gradTo}
+              flex items-center justify-center shadow-lg ${shadow} shrink-0
+              group-hover:scale-110 transition-transform duration-200`}
+          >
+            <Icon size={16} className="text-white" />
           </div>
         )}
       </div>
-      <p className="text-3xl font-bold text-slate-800 tracking-tight">{value ?? "—"}</p>
+      <p className="text-2xl sm:text-3xl font-bold text-slate-800 tracking-tight mt-1">
+        {value ?? "—"}
+      </p>
       {sub && <p className="text-xs text-slate-400">{sub}</p>}
     </div>
   );
