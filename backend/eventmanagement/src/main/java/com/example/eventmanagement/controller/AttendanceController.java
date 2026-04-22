@@ -1,5 +1,6 @@
 package com.example.eventmanagement.controller;
 
+import com.example.eventmanagement.dto.AttendanceRequest;
 import com.example.eventmanagement.model.Attendance;
 import com.example.eventmanagement.service.AttendanceService;
 import org.springframework.http.ResponseEntity;
@@ -24,28 +25,19 @@ public class AttendanceController {
      * Body: { "registration": {"id": 1}, "present": true, "markedBy": {"id": 5} }
      */
     @PostMapping("/mark")
-    public ResponseEntity<?> markAttendance(@RequestBody Map<String, Object> body) {
-        try {
-            // Parse registration id
-            @SuppressWarnings("unchecked")
-            Map<String, Object> regMap = (Map<String, Object>) body.get("registration");
-            Long registrationId = Long.valueOf(regMap.get("id").toString());
+public ResponseEntity<?> markAttendance(@RequestBody AttendanceRequest req) {
+    try {
+        Attendance att = attendanceService.markAttendance(
+            req.getRegistrationId(),
+            req.isPresent(),
+            req.getMarkedById()
+        );
+        return ResponseEntity.ok(att);
 
-            // Parse present
-            boolean present = Boolean.parseBoolean(body.get("present").toString());
-
-            // Parse markedBy id
-            @SuppressWarnings("unchecked")
-            Map<String, Object> markedByMap = (Map<String, Object>) body.get("markedBy");
-            Long markedById = Long.valueOf(markedByMap.get("id").toString());
-
-            Attendance att = attendanceService.markAttendance(registrationId, present, markedById);
-            return ResponseEntity.ok(att);
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
+    } catch (Exception e) {
+        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
     }
+}
 
     /**
      * GET /attendance/event/{eventId}
