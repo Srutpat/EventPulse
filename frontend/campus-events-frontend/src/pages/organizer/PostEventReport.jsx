@@ -1,202 +1,186 @@
-import { useEffect, useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import DashboardLayout from "../../layouts/DashboardLayout";
 import PageHeader      from "../../components/PageHeader";
-import { eventHasEnded, formatDateTime } from "../../utils";
-import { FileText, Upload, AlertCircle, Download } from "lucide-react";
+import { safeArray, getStatus, formatDateTime } from "../../utils";
+import { Download, ChevronDown, ChevronUp, FileText, ExternalLink } from "lucide-react";
 
-const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5 MB
+export default function FacultyReports({ onLogout }) {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const myClubs = (user.clubNames || user.clubName || "")
+    .split(",").map(c => c.trim().toLowerCase()).filter(Boolean);
 
-export default function PostEventReport({ onLogout }) {
-  const { id }   = useParams();
-  const navigate = useNavigate();
-  const fileRef  = useRef();
-
-  const [event,    setEvent]    = useState(null);
-  const [form,     setForm]     = useState({ eventReport:"", actualExpenditure:"", reimbursementDetails:"" });
-  const [file,     setFile]     = useState(null);      // File object
-  const [fileB64,  setFileB64]  = useState("");         // base64 data URL
-  const [loading,  setLoading]  = useState(false);
-  const [fetching, setFetching] = useState(true);
-  const [error,    setError]    = useState("");
-  const [success,  setSuccess]  = useState("");
+  const [events,     setEvents]     = useState([]);
+  const [loading,    setLoading]    = useState(true);
+  const [expanded,   setExpanded]   = useState({});
+  const [attendance, setAttendance] = useState({});
 
   useEffect(() => {
-    api.get(`/events/${id}`)
+    api.get("/events")
       .then(r => {
-        setEvent(r.data);
-        setForm({
-          eventReport:          r.data.eventReport          || "",
-          actualExpenditure:    r.data.actualExpenditure    ?? "",
-          reimbursementDetails: r.data.reimbursementDetails || "",
-        });
-        // If a report file was previously saved, note it
-        if (r.data.reportFileName) setFile({ name: r.data.reportFileName, existing: true });
+        const all = safeArray(r.data).filter(e => getStatus(e) === "APPROVED");
+        const visible = myClubs.length === 0
+          ? all
+          : all.filter(e => e.clubName && myClubs.includes(e.clubName.trim().toLowerCase()));
+        setEvents(visible);
       })
-      .catch(() => setError("Event not found."))
-      .finally(() => setFetching(false));
-  }, [id]);
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
-  const set = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
-
-  const handleFile = async (e) => {
-    const f = e.target.files[0];
-    if (!f) return;
-    if (f.size > MAX_FILE_BYTES) { setError("File must be under 5 MB."); return; }
-    setFile(f);
-    // Read as base64 data URL
-    const reader = new FileReader();
-    reader.onload = () => setFileB64(reader.result);
-    reader.readAsDataURL(f);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.eventReport.trim() && !fileB64 && !file?.existing) {
-      setError("Please enter a report or upload a file."); return;
+  const toggle = async (eventId) => {
+    const next = { ...expanded, [eventId]: !expanded[eventId] };
+    setExpanded(next);
+    if (next[eventId] && !attendance[eventId]) {
+      try {
+        const r = await api.get(`/attendance/event/${eventId}`);
+        setAttendance(a => ({ ...a, [eventId]: safeArray(r.data) }));
+      } catch { setAttendance(a => ({ ...a, [eventId]: [] })); }
     }
-    setLoading(true); setError(""); setSuccess("");
-    try {
-      await api.post(`/events/${id}/post-event`, {
-        eventReport:          form.eventReport,
-        actualExpenditure:    form.actualExpenditure ? parseFloat(form.actualExpenditure) : null,
-        reimbursementDetails: form.reimbursementDetails,
-        reportFileData:       fileB64 || undefined,           // full base64 data URL
-        reportFileName:       file && !file.existing ? file.name : undefined,
-      });
-      setSuccess("Report submitted! Faculty and SDW can now view and download it.");
-      setTimeout(() => navigate("/organizer"), 2000);
-    } catch (err) {
-      setError(err.response?.data || "Failed to submit report.");
-    } finally { setLoading(false); }
   };
 
-  if (fetching) return <DashboardLayout onLogout={onLogout}><div className="text-center mt-20 text-slate-400">Loading…</div></DashboardLayout>;
+  const exportCSV = (ev, e) => {
+    e.stopPropagation();
+    const rows = attendance[ev.id] || [];
+    if (!rows.length) { alert("No attendance data yet."); return; }
+    const header = "PRN,Name,Department,Division,Present,Marked At";
+    const lines  = rows.map(a => [
+      a.registration?.student?.prn        || "",
+      a.registration?.student?.name       || "",
+      a.registration?.student?.department || "",
+      a.registration?.student?.division   || "",
+      a.present ? "Yes" : "No",
+      a.markedAt ? new Date(a.markedAt).toLocaleString("en-IN") : "",
+    ].join(","));
+    const blob = new Blob([[header, ...lines].join("\n")], { type:"text/csv" });
+    const url  = URL.createObjectURL(blob);
+    const a2   = document.createElement("a");
+    a2.href = url; a2.download = `${ev.title.replace(/\s+/g,"_")}_attendance.csv`;
+    a2.click(); URL.revokeObjectURL(url);
+  };
 
-  if (event && !eventHasEnded(event)) {
-    return (
-      <DashboardLayout onLogout={onLogout}>
-        <PageHeader title="Post-Event Report" subtitle={event.title}/>
-        <div className="max-w-2xl glass-card p-8 text-center">
-          <AlertCircle size={40} className="text-amber-400 mx-auto mb-4"/>
-          <h3 className="font-bold text-slate-800 text-lg mb-2">Event hasn't ended yet</h3>
-          <p className="text-slate-500 text-sm mb-2">Reports can only be submitted after the event concludes.</p>
-          {(event.endDate || event.startDate) && (
-            <p className="text-xs text-slate-400 mb-6">
-              Event ends: {formatDateTime(event.endDate || event.startDate)}
-            </p>
-          )}
-          <button onClick={() => navigate("/organizer")} className="btn">Back to Dashboard</button>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  const variance = event?.estimatedBudget && form.actualExpenditure
-    ? parseFloat(form.actualExpenditure) - event.estimatedBudget : null;
+  // Open the actual uploaded PDF in a new tab
+  const openReport = (ev, e) => {
+    e.stopPropagation();
+    if (!ev.reportFileUrl) { alert("No report file uploaded yet."); return; }
+    // If it's a real URL (Supabase Storage) open in new tab
+    // If it's a base64 data URL, open via blob
+    if (ev.reportFileUrl.startsWith("data:")) {
+      const arr   = ev.reportFileUrl.split(",");
+      const mime  = arr[0].match(/:(.*?);/)[1];
+      const bStr  = atob(arr[1]);
+      const bytes = new Uint8Array(bStr.length);
+      for (let i = 0; i < bStr.length; i++) bytes[i] = bStr.charCodeAt(i);
+      const blob  = new Blob([bytes], { type: mime });
+      const url   = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+    } else {
+      window.open(ev.reportFileUrl, "_blank");
+    }
+  };
 
   return (
     <DashboardLayout onLogout={onLogout}>
-      <PageHeader title="Post-Event Report" subtitle={event?.title || ""}/>
-      <div className="max-w-2xl">
+      <PageHeader title="Attendance & Reports"
+        subtitle="View attendance and open post-event report files uploaded by organizers"/>
 
-        {/* Budget comparison */}
-        {event?.estimatedBudget > 0 && (
-          <div className="glass-card p-5 mb-6 grid grid-cols-3 gap-4 text-center">
-            <div>
-              <p className="text-xs text-slate-400 mb-1">Estimated</p>
-              <p className="text-lg font-bold text-slate-700">₹{event.estimatedBudget.toLocaleString("en-IN")}</p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-400 mb-1">Actual Spent</p>
-              <p className="text-lg font-bold text-slate-700">
-                {form.actualExpenditure ? `₹${parseFloat(form.actualExpenditure).toLocaleString("en-IN")}` : "—"}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-slate-400 mb-1">Variance</p>
-              {variance !== null
-                ? <p className={`text-lg font-bold ${variance > 0 ? "text-red-500" : "text-emerald-600"}`}>
-                    {variance > 0 ? "+" : ""}₹{Math.abs(variance).toLocaleString("en-IN")}
+      {loading ? (
+        <div className="space-y-3 max-w-3xl">
+          {[1,2].map(i => <div key={i} className="skeleton h-16 rounded-2xl"/>)}
+        </div>
+      ) : events.length === 0 ? (
+        <div className="glass-card p-12 text-center max-w-3xl">
+          <p className="text-slate-400 text-sm">No approved events found for your clubs.</p>
+        </div>
+      ) : (
+        <div className="space-y-3 max-w-3xl">
+          {events.map(ev => (
+            <div key={ev.id} className="glass-card overflow-hidden">
+              <div className="flex items-center justify-between p-4 cursor-pointer"
+                onClick={() => toggle(ev.id)}>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-slate-800">{ev.title}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {ev.organizer?.name} · {formatDateTime(ev.startDate || ev.eventDate)}
+                    {ev.clubName && ` · ${ev.clubName}`}
                   </p>
-                : <p className="text-lg font-bold text-slate-300">—</p>}
-            </div>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="glass-card p-8 flex flex-col gap-5">
-          {error   && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-2.5">{error}</div>}
-          {success && <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5">✓ {success}</div>}
-
-          {/* Text report */}
-          <div>
-            <label className="field-label"><FileText size={13} className="inline mr-1"/>Event Report</label>
-            <p className="text-xs text-slate-400 mb-1">Describe highlights, attendance, outcomes, learnings.</p>
-            <textarea name="eventReport" value={form.eventReport} onChange={set} rows={6}
-              placeholder="The event was held on [date] and attended by [N] students…"
-              className="input resize-none"/>
-          </div>
-
-          {/* PDF/File upload — stores as base64 so faculty/SDW can download */}
-          <div>
-            <label className="field-label"><Upload size={13} className="inline mr-1"/>Upload Report File (PDF / Word / Image, max 5 MB)</label>
-            <p className="text-xs text-slate-400 mb-1">
-              Faculty and SDW can <strong>view and download</strong> this file from their Reports section.
-            </p>
-
-            <div onClick={() => fileRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all
-                ${file && !file.existing ? "border-emerald-400 bg-emerald-50" : "border-slate-200 hover:border-indigo-300 hover:bg-slate-50"}`}>
-              <input ref={fileRef} type="file" className="hidden"
-                accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
-                onChange={handleFile}/>
-              {file ? (
-                <div>
-                  <p className="font-semibold text-sm text-emerald-700">✓ {file.name}</p>
-                  {!file.existing && (
-                    <p className="text-xs text-emerald-500 mt-0.5">
-                      {(file.size / 1024).toFixed(0)} KB · Click to change
+                  {ev.reportFileName && (
+                    <p className="text-xs text-emerald-600 mt-0.5 flex items-center gap-1">
+                      <FileText size={10}/> Report file: {ev.reportFileName}
                     </p>
                   )}
-                  {file.existing && <p className="text-xs text-slate-400 mt-0.5">Previously uploaded · Click to replace</p>}
                 </div>
-              ) : (
-                <div>
-                  <Upload size={22} className="text-slate-300 mx-auto mb-2"/>
-                  <p className="text-sm text-slate-500">Click to upload PDF, Word doc, or image</p>
-                  <p className="text-xs text-slate-400 mt-1">Stored securely — reviewers can download it</p>
+                <div className="flex gap-2 shrink-0 ml-3" onClick={e => e.stopPropagation()}>
+                  <button onClick={e => exportCSV(ev, e)}
+                    className="btn-outline text-xs px-3 py-1.5 flex items-center gap-1">
+                    <Download size={12}/> Attendance CSV
+                  </button>
+                  {ev.reportFileUrl && (
+                    <button onClick={e => openReport(ev, e)}
+                      className="btn text-xs px-3 py-1.5 flex items-center gap-1">
+                      <ExternalLink size={12}/> Open Report
+                    </button>
+                  )}
+                </div>
+                {expanded[ev.id]
+                  ? <ChevronUp size={16} className="text-slate-400 shrink-0 ml-2"/>
+                  : <ChevronDown size={16} className="text-slate-400 shrink-0 ml-2"/>}
+              </div>
+
+              {expanded[ev.id] && (
+                <div className="border-t border-slate-100 px-4 py-3">
+                  {ev.eventReport && (
+                    <div className="mb-4 bg-slate-50 rounded-xl p-3">
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Event Report</p>
+                      <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">{ev.eventReport}</p>
+                    </div>
+                  )}
+                  {ev.reimbursementDetails && (
+                    <div className="mb-4 bg-amber-50 rounded-xl p-3">
+                      <p className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-1">Reimbursement</p>
+                      <p className="text-sm text-slate-700 whitespace-pre-line">{ev.reimbursementDetails}</p>
+                    </div>
+                  )}
+                  {!attendance[ev.id] ? (
+                    <p className="text-xs text-slate-400">Loading attendance…</p>
+                  ) : attendance[ev.id].length === 0 ? (
+                    <p className="text-xs text-slate-400">No attendance marked yet.</p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="text-left text-slate-500 border-b border-slate-100">
+                            <th className="pb-2 pr-4 font-semibold">PRN</th>
+                            <th className="pb-2 pr-4 font-semibold">Name</th>
+                            <th className="pb-2 pr-4 font-semibold">Dept / Div</th>
+                            <th className="pb-2 font-semibold">Present</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {attendance[ev.id].map((a, i) => (
+                            <tr key={i} className="border-b border-slate-50">
+                              <td className="py-1.5 pr-4 text-slate-600">{a.registration?.student?.prn || "—"}</td>
+                              <td className="py-1.5 pr-4 font-medium text-slate-800">{a.registration?.student?.name || "—"}</td>
+                              <td className="py-1.5 pr-4 text-slate-500">
+                                {a.registration?.student?.department || "—"} / {a.registration?.student?.division || "—"}
+                              </td>
+                              <td className="py-1.5">
+                                <span className={`badge ${a.present ? "badge-green" : "badge-red"}`}>
+                                  {a.present ? "✓ Yes" : "✗ No"}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Actual expenditure */}
-          <div>
-            <label className="field-label">Actual Expenditure (₹)</label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-2.5 text-slate-400 text-sm">₹</span>
-              <input name="actualExpenditure" type="number" min="0" step="0.01"
-                value={form.actualExpenditure} onChange={set} placeholder="0" className="input pl-8"/>
-            </div>
-          </div>
-
-          {/* Reimbursement */}
-          <div>
-            <label className="field-label">Reimbursement Details</label>
-            <textarea name="reimbursementDetails" value={form.reimbursementDetails} onChange={set}
-              rows={3} className="input resize-none"
-              placeholder="Bill 1: Venue – ₹5,000 (paid by organizer, reimbursement needed)"/>
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <button type="submit" disabled={loading} className="btn flex-1 py-2.5">
-              {loading ? "Submitting…" : event?.eventReport ? "Update Report" : "Submit Report"}
-            </button>
-            <button type="button" onClick={() => navigate("/organizer")} className="btn-outline px-6 py-2.5">Cancel</button>
-          </div>
-        </form>
-      </div>
+          ))}
+        </div>
+      )}
     </DashboardLayout>
   );
 }
