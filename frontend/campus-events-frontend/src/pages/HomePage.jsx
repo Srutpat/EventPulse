@@ -4,8 +4,31 @@ import api from "../api/axios";
 import { safeArray, formatDateTime, formatDateOnly, deadlinePassed } from "../utils";
 import {
   Zap, Calendar, MapPin, Trophy, IndianRupee,
-  Users, Clock, ArrowRight, Search, Globe, Phone
+  Users, Clock, ArrowRight, Search, Globe, Phone, Loader2
 } from "lucide-react";
+
+function SkeletonCard() {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden animate-pulse">
+      <div className="h-1.5 w-full bg-slate-200" />
+      <div className="p-5 flex flex-col gap-3">
+        <div className="flex gap-2">
+          <div className="h-5 w-16 bg-slate-200 rounded-full" />
+          <div className="h-5 w-20 bg-slate-200 rounded-full" />
+        </div>
+        <div className="h-5 w-3/4 bg-slate-200 rounded-lg" />
+        <div className="h-3 w-full bg-slate-100 rounded" />
+        <div className="h-3 w-5/6 bg-slate-100 rounded" />
+        <div className="space-y-2 mt-1">
+          <div className="h-3 w-1/2 bg-slate-100 rounded" />
+          <div className="h-3 w-2/5 bg-slate-100 rounded" />
+          <div className="h-3 w-3/5 bg-slate-100 rounded" />
+        </div>
+        <div className="h-9 w-full bg-slate-200 rounded-xl mt-2" />
+      </div>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -17,7 +40,6 @@ export default function HomePage() {
     api.get("/events/approved")
       .then(r => {
         const all = safeArray(r.data);
-        // Only events whose registration deadline has NOT passed
         const live = all.filter(e => !deadlinePassed(e));
         setEvents(live);
       })
@@ -61,9 +83,19 @@ export default function HomePage() {
       <div className="max-w-6xl mx-auto px-6 pt-16 pb-10 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-100
           text-indigo-700 text-xs font-bold mb-6 border border-indigo-200">
-          <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"/>
-          {events.length} events live now
+          {loading ? (
+            <>
+              <Loader2 size={13} className="animate-spin text-indigo-500" />
+              Loading events…
+            </>
+          ) : (
+            <>
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"/>
+              {events.length} events live now
+            </>
+          )}
         </div>
+
         <h1 className="text-5xl font-bold text-slate-800 mb-4 leading-tight"
           style={{ fontFamily: "'Outfit',sans-serif" }}>
           Where Campus Events<br/>
@@ -76,7 +108,6 @@ export default function HomePage() {
           Discover events from every club and department. Register in one click.
         </p>
 
-        {/* Search */}
         <div className="max-w-lg mx-auto relative">
           <Search size={18} className="absolute left-4 top-3.5 text-slate-400" />
           <input
@@ -91,11 +122,15 @@ export default function HomePage() {
       {/* Events grid */}
       <div className="max-w-6xl mx-auto px-6 pb-20">
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {[1,2,3,4,5,6].map(i => (
-              <div key={i} className="skeleton h-64 rounded-2xl" />
-            ))}
-          </div>
+          <>
+            <div className="flex items-center gap-2 mb-5">
+              <Loader2 size={15} className="text-indigo-400 animate-spin" />
+              <p className="text-sm text-slate-400 font-medium">Fetching live events, hang tight…</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              {[1,2,3,4,5,6].map(i => <SkeletonCard key={i} />)}
+            </div>
+          </>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
             <Calendar size={48} className="text-slate-200 mx-auto mb-4" />
@@ -114,11 +149,9 @@ export default function HomePage() {
                 const multiDay = ev.endDate &&
                   formatDateOnly(ev.startDate) !== formatDateOnly(ev.endDate);
                 const deadlineDate = ev.registrationDeadline
-                  ? new Date(ev.registrationDeadline)
-                  : null;
+                  ? new Date(ev.registrationDeadline) : null;
                 const daysLeft = deadlineDate
-                  ? Math.ceil((deadlineDate - new Date()) / (1000 * 60 * 60 * 24))
-                  : null;
+                  ? Math.ceil((deadlineDate - new Date()) / (1000 * 60 * 60 * 24)) : null;
 
                 return (
                   <div key={ev.id}
@@ -126,37 +159,22 @@ export default function HomePage() {
                     className="bg-white rounded-2xl shadow-sm border border-slate-100
                       flex flex-col hover:-translate-y-1 hover:shadow-xl
                       transition-all duration-200 animate-[fadeSlideUp_0.35s_ease_both] overflow-hidden">
-
-                    {/* Coloured top bar */}
                     <div className="h-1.5 w-full"
                       style={{ background:"linear-gradient(90deg,#6366f1,#8b5cf6)" }} />
-
                     <div className="p-5 flex flex-col gap-3 flex-1">
-                      {/* Title + badges */}
                       <div>
                         <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                          {ev.category && (
-                            <span className="badge badge-indigo">{ev.category}</span>
-                          )}
-                          {ev.clubName && (
-                            <span className="badge badge-violet">{ev.clubName}</span>
-                          )}
+                          {ev.category && <span className="badge badge-indigo">{ev.category}</span>}
+                          {ev.clubName  && <span className="badge badge-violet">{ev.clubName}</span>}
                           {daysLeft !== null && daysLeft <= 3 && (
                             <span className="badge badge-red">⚡ {daysLeft}d left</span>
                           )}
                         </div>
-                        <h3 className="font-bold text-slate-800 text-base leading-snug">
-                          {ev.title}
-                        </h3>
+                        <h3 className="font-bold text-slate-800 text-base leading-snug">{ev.title}</h3>
                       </div>
-
                       {ev.description && (
-                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                          {ev.description}
-                        </p>
+                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">{ev.description}</p>
                       )}
-
-                      {/* Details */}
                       <div className="text-xs text-slate-500 space-y-1.5">
                         <div className="flex items-center gap-1.5">
                           <Calendar size={12} className="text-slate-400 shrink-0" />
@@ -165,8 +183,7 @@ export default function HomePage() {
                             : formatDateTime(ev.startDate || ev.eventDate)}
                         </div>
                         <div className="flex items-center gap-1.5">
-                          <MapPin size={12} className="text-slate-400 shrink-0" />
-                          {ev.location}
+                          <MapPin size={12} className="text-slate-400 shrink-0" />{ev.location}
                         </div>
                         {ev.maxParticipants && (
                           <div className="flex items-center gap-1.5">
@@ -182,8 +199,6 @@ export default function HomePage() {
                           </div>
                         )}
                       </div>
-
-                      {/* Perks row */}
                       <div className="flex gap-3 flex-wrap text-xs">
                         {ev.entryFee > 0
                           ? <span className="flex items-center gap-1 font-semibold text-amber-600">
@@ -197,12 +212,9 @@ export default function HomePage() {
                           </span>
                         )}
                       </div>
-
-                      {/* Coordinator */}
                       {ev.coordinatorName && (
                         <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                          <Phone size={11} />
-                          {ev.coordinatorName}
+                          <Phone size={11} />{ev.coordinatorName}
                           {ev.coordinatorContact && ` · ${ev.coordinatorContact}`}
                         </div>
                       )}
@@ -212,11 +224,8 @@ export default function HomePage() {
                           <Globe size={11} /> Club Website
                         </a>
                       )}
-
-                      {/* Register button */}
                       <div className="mt-auto pt-2">
-                        <button onClick={() => navigate("/login")}
-                          className="btn w-full text-sm py-2.5">
+                        <button onClick={() => navigate("/login")} className="btn w-full text-sm py-2.5">
                           Register Now <ArrowRight size={14} />
                         </button>
                         <p className="text-center text-xs text-slate-400 mt-1.5">
@@ -232,11 +241,8 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Footer */}
       <div className="border-t border-slate-200 bg-white/60 py-6 text-center">
-        <p className="text-sm text-slate-400">
-          EventPulse © 2025 · College Event Management System
-        </p>
+        <p className="text-sm text-slate-400">EventPulse © 2025 · College Event Management System</p>
       </div>
     </div>
   );
